@@ -20,8 +20,8 @@ fn main() {
     }
     let request = translate::TranslationRequest {
         text: "my name is { user_name }.".to_string(),
-        from_language: "en".to_string(), //translate::ValidTargetLanguages::es,
-        to_language: "es".to_string(),   //translate::ValidSourceLanguages::en,
+        from_language: translate::ValidSourceLanguages::en,
+        to_language: translate::ValidTargetLanguages::es,
     };
     translate::translate_string(request);
 }
