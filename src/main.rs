@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
-use std::io::Error;
+
 use std::path::Path;
 
 use clap::Parser;
@@ -11,38 +11,23 @@ mod translate;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
 struct Args {
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "strings/strings_en.json")]
     path: Option<String>,
 
     #[arg(short, long)]
     api_key: Option<String>,
-}
 
-fn get_file_path_from_defaults() -> Result<String, Error> {
-    const DEFAULT_PATH: &str = "strings/strings_en.json";
-    if Path::new(DEFAULT_PATH).exists() {
-        Ok(DEFAULT_PATH.to_string())
-    } else {
-        Err(Error::new(std::io::ErrorKind::NotFound, "File not found"))
-    }
+    #[arg(short, long)]
+    target_language: Option<String>,
 }
 
 fn main() {
     let args = Args::parse();
-    let source_path;
-    if args.path == None {
-        let path = get_file_path_from_defaults();
-        if path.is_err() {
-            println!("No path provided and no default file found.");
-            return;
-        }
-        source_path = path.unwrap();
-    } else {
-        source_path = args.path.unwrap();
-        if !Path::new(&source_path).exists() {
-            println!("File not found.");
-            return;
-        }
+
+    let source_path = args.path.unwrap();
+    if !(Path::new(&source_path).exists()) {
+        println!("Provided Filepath does not exist");
+        return;
     }
 
     let json = file::get_json(source_path).unwrap();
