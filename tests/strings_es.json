@@ -1,0 +1,14 @@
+{
+  "iLike": {
+    "string": "Me gusta {cosa_uno} y {cosa_dos}.",
+    "example_keys": null
+  },
+  "helloWorld": {
+    "string": "Hola mundo",
+    "example_keys": null
+  },
+  "myNameIs": {
+    "string": "mi nombre es { user_name }.",
+    "example_keys": null
+  }
+}

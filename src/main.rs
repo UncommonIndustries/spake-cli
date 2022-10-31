@@ -1,4 +1,6 @@
 use clap::Parser;
+use std::collections::HashMap;
+use std::fs;
 mod file;
 mod translate;
 
@@ -16,8 +18,10 @@ fn main() {
     let args = Args::parse();
     // TODO flesh out the args again.
 
-    let filePath = "tests/strings_en.json".to_string();
-    let json = file::get_json(filePath).unwrap();
+    let file_path = "tests/strings_en.json".to_string();
+    let json = file::get_json(file_path).unwrap();
+
+    let mut destination_hash_map: HashMap<String, file::Key> = HashMap::new();
 
     for (key, value) in json.iter() {
         let targetLanguage = translate::ValidTargetLanguages::es;
@@ -30,5 +34,15 @@ fn main() {
         };
         let translation_result = translate::translate_string(request);
         println!("{:?}", translation_result);
+        destination_hash_map.insert(
+            key.clone(),
+            file::Key {
+                string: translation_result.unwrap().text,
+                example_keys: None,
+            },
+        );
     }
+    let target_file = "tests/strings_es.json".to_string();
+    let json = serde_json::to_string_pretty(&destination_hash_map).unwrap(); // TODO remove unwrap
+    fs::write(target_file, json);
 }

@@ -28,7 +28,7 @@ pub struct TranslationRequest {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TranslationResponse {
     // The translated text.
-    text: String,
+    pub text: String,
 }
 
 pub fn translate_string(input: TranslationRequest) -> Result<TranslationResponse, Error> {
