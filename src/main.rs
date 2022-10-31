@@ -23,5 +23,6 @@ fn main() {
         from_language: translate::ValidSourceLanguages::en,
         to_language: translate::ValidTargetLanguages::es,
     };
-    translate::translate_string(request);
+    let translation_result = translate::translate_string(request);
+    println!("{:?}", translation_result);
 }
