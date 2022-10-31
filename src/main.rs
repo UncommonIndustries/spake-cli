@@ -27,7 +27,7 @@ fn main() {
 
     let source_path = args.path.unwrap();
     if !(Path::new(&source_path).exists()) {
-        println!("Provided Filepath does not exist");
+        println!("Provided filepath does not exist");
         return;
     }
 
