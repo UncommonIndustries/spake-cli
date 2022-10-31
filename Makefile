@@ -4,4 +4,4 @@ build:
 	cargo build
 
 test: build
-	./target/debug/$(NAME) --path ./example.json
+	./target/debug/$(NAME) --path ./tests/strings_en.json

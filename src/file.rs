@@ -8,7 +8,6 @@ use std::fs::File;
 use std::io::prelude::*;
 
 // File.rs is designed to deal with reading and writing string files.
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Key {
     string: String, // the value of the string that goes into a component

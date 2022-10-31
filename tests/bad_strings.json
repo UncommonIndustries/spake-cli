@@ -3,7 +3,6 @@
         "string" : "hello world"
     },
     "myNameIs": {
-
         "example_keys": [{
             "user_name" : "Justin"
         }]
@@ -11,5 +10,6 @@
     "iLike" : {
         "string": "I like to { thing_one } and { thing_two }.",
         "example_keys": [{"thing_one": "play football"}, {"thing_two": "eat pizza"}]
+        
     }
 }

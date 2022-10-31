@@ -1,6 +1,7 @@
 {
     "helloWorld": {
-        "string" : "hello world"
+        "string" : "Note this test is readable but is technically invalid translation docs",
+        "number" : 123 
     },
     "myNameIs": {
         "string": "my name is { user_name }.",
