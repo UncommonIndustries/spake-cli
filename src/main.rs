@@ -71,6 +71,17 @@ fn main() {
         );
     }
     let target_file = target_file_path.to_string();
-    let json = serde_json::to_string_pretty(&destination_hash_map).unwrap(); // TODO remove unwrap
-    fs::write(target_file, json);
+    let json = match serde_json::to_string_pretty(&destination_hash_map) {
+        Ok(json) => json,
+        Err(error) => {
+            println!("Internat Error converting json to string: {}", error);
+            return;
+        }
+    };
+
+    let success = fs::write(target_file, json);
+    match success {
+        Ok(_) => println!("Successfully wrote to file"),
+        Err(error) => println!("Error writing to file: {}", error),
+    }
 }
