@@ -1,5 +1,5 @@
 use reqwest::blocking::Client;
-
+use reqwest::Error;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -31,14 +31,14 @@ pub struct TranslationResponse {
     text: String,
 }
 
-pub fn translate_string(input: TranslationRequest) {
+pub fn translate_string(input: TranslationRequest) -> Result<TranslationResponse, Error> {
     let client = Client::new();
-    println! {"{:?}", input};
+
     let request = client
         .post("http://localhost:8000/api/v1/translate")
         .json(&input);
-    println!("request : {:?}", request);
-    let res = request.send().unwrap();
-    let jsonresponse = res.json::<TranslationResponse>();
-    println!("jsonresponse : {:?}", jsonresponse);
+
+    let res = request.send()?;
+    let response: TranslationResponse = res.json()?;
+    Ok(response)
 }
