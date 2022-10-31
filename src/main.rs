@@ -31,17 +31,26 @@ fn main() {
         return;
     }
 
-    let target_language =
-        match translate::ValidTargetLanguages::from_str(&args.target_language.unwrap()) {
-            Ok(language) => language,
-            Err(error) => {
-                println!("target language not supported{}", error);
-                return;
-            }
-        };
+    let target_language_argument = args.target_language.unwrap();
+    let target_file_path = format!("strings/strings_{}.json", target_language_argument);
+
+    let target_language = match translate::ValidTargetLanguages::from_str(&target_language_argument)
+    {
+        Ok(language) => language,
+        Err(error) => {
+            println!("target language not supported{}", error);
+            return;
+        }
+    };
     let source_language = translate::ValidSourceLanguages::en;
 
-    let json = file::get_json(source_path).unwrap();
+    let json = match file::get_json(source_path) {
+        Ok(json) => json,
+        Err(error) => {
+            println!("Error reading json file: {}", error);
+            return;
+        }
+    };
 
     let mut destination_hash_map: HashMap<String, file::Key> = HashMap::new();
 
@@ -61,7 +70,7 @@ fn main() {
             },
         );
     }
-    let target_file = "tests/strings_es.json".to_string();
+    let target_file = target_file_path.to_string();
     let json = serde_json::to_string_pretty(&destination_hash_map).unwrap(); // TODO remove unwrap
     fs::write(target_file, json);
 }
