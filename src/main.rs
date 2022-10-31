@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::str::FromStr;
 
 use std::path::Path;
 
@@ -17,7 +18,7 @@ struct Args {
     #[arg(short, long)]
     api_key: Option<String>,
 
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "es")]
     target_language: Option<String>,
 }
 
@@ -30,18 +31,25 @@ fn main() {
         return;
     }
 
+    let target_language =
+        match translate::ValidTargetLanguages::from_str(&args.target_language.unwrap()) {
+            Ok(language) => language,
+            Err(error) => {
+                println!("target language not supported{}", error);
+                return;
+            }
+        };
+    let source_language = translate::ValidSourceLanguages::en;
+
     let json = file::get_json(source_path).unwrap();
 
     let mut destination_hash_map: HashMap<String, file::Key> = HashMap::new();
 
     for (key, value) in json.iter() {
-        let targetLanguage = translate::ValidTargetLanguages::es;
-        let sourceLanguage = translate::ValidSourceLanguages::en;
-
         let request = translate::TranslationRequest {
             text: value.string.clone(),
-            from_language: sourceLanguage,
-            to_language: targetLanguage,
+            from_language: source_language,
+            to_language: target_language,
         };
         let translation_result = translate::translate_string(request);
         println!("{:?}", translation_result);

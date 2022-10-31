@@ -1,17 +1,32 @@
 use reqwest::blocking::Client;
 use reqwest::Error;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum ValidTargetLanguages {
     es,
     fr,
     de,
     it,
 }
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum ValidSourceLanguages {
     en,
+}
+
+impl FromStr for ValidTargetLanguages {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "es" => Ok(ValidTargetLanguages::es),
+            "fr" => Ok(ValidTargetLanguages::fr),
+            "de" => Ok(ValidTargetLanguages::de),
+            "it" => Ok(ValidTargetLanguages::it),
+            _ => Err(format!("{} is not a valid target language", s)),
+        }
+    }
 }
 
 // translate.rs is a service to translate the input text into the target language.
