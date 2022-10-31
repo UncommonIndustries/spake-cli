@@ -14,15 +14,21 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    if let Some(filepath) = args.path {
-        let json = file::get_json(filepath);
-        // println!("{:?}", json);
+    // TODO flesh out the args again.
+
+    let filePath = "tests/strings_en.json".to_string();
+    let json = file::get_json(filePath).unwrap();
+
+    for (key, value) in json.iter() {
+        let targetLanguage = translate::ValidTargetLanguages::es;
+        let sourceLanguage = translate::ValidSourceLanguages::en;
+
+        let request = translate::TranslationRequest {
+            text: value.string.clone(),
+            from_language: sourceLanguage,
+            to_language: targetLanguage,
+        };
+        let translation_result = translate::translate_string(request);
+        println!("{:?}", translation_result);
     }
-    let request = translate::TranslationRequest {
-        text: "my name is { user_name }.".to_string(),
-        from_language: translate::ValidSourceLanguages::en,
-        to_language: translate::ValidTargetLanguages::es,
-    };
-    let translation_result = translate::translate_string(request);
-    println!("{:?}", translation_result);
 }

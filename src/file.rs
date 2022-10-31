@@ -10,8 +10,8 @@ use std::io::prelude::*;
 // File.rs is designed to deal with reading and writing string files.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Key {
-    string: String, // the value of the string that goes into a component
-    example_keys: Option<LinkedList<HashMap<String, String>>>, // example keys that go into the string when it's valid
+    pub string: String, // the value of the string that goes into a component
+    pub example_keys: Option<LinkedList<HashMap<String, String>>>, // example keys that go into the string when it's valid
 }
 
 pub fn get_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
