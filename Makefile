@@ -6,6 +6,10 @@ build:
 test: build
 	./target/debug/$(NAME) --path ./tests/strings_en.json
 
+clean: 
+	cargo clean
+	-rm -rf dist/
+
 artifacts: mac-arm-dist mac-x86-dist 
 
 mac-arm-dist:
