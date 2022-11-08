@@ -79,12 +79,18 @@ fn main() {
                     to_language: target_language,
                 };
                 let translation_result =
-                    translate::translate_string(request, args.host.clone().unwrap());
-                println!("{:?}", translation_result);
+                    match translate::translate_string(request, args.host.clone().unwrap()) {
+                        Ok(translation) => translation,
+                        Err(error) => {
+                            println!("Error translating string: {}", error);
+                            return;
+                        }
+                    };
+
                 destination_hash_map.insert(
                     key.clone(),
                     file::Key {
-                        string: translation_result.unwrap().text,
+                        string: translation_result.text,
                         example_keys: None,
                     },
                 );

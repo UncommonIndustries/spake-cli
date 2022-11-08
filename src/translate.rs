@@ -1,9 +1,11 @@
 use reqwest::blocking::Client;
-use reqwest::Error;
+
 use serde::{Deserialize, Serialize};
+use std::fmt;
 use std::str::FromStr;
 
 use crate::params::API_ROUTE;
+use url::{ParseError, Url};
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum ValidTargetLanguages {
@@ -48,19 +50,44 @@ pub struct TranslationResponse {
     pub text: String,
 }
 
-fn build_api_endpoint(host: String) -> String {
-    format!("{}/{}", host, API_ROUTE,)
+fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
+    let base = Url::parse(&host).expect("Invalid host");
+    let joined = base.join(API_ROUTE)?;
+    Ok(joined)
+}
+
+#[derive(Debug, Clone)]
+pub struct TranslationError;
+
+impl fmt::Display for TranslationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // TODO expand this to give better feedback to users.
+        write!(f, "Error translating string")
+    }
 }
 
 pub fn translate_string(
     input: TranslationRequest,
     host: String,
-) -> Result<TranslationResponse, Error> {
+) -> Result<TranslationResponse, TranslationError> {
     let client = Client::new();
     let fqdn = build_api_endpoint(host);
+    let fqdn = match fqdn {
+        Ok(fqdn) => fqdn,
+        Err(error) => return Err(TranslationError),
+    };
+
     let request = client.post(fqdn).json(&input);
 
-    let res = request.send()?;
-    let response: TranslationResponse = res.json()?;
+    let res = match request.send() {
+        Ok(res) => res,
+        Err(error) => return Err(TranslationError),
+    };
+
+    let response: TranslationResponse = match res.json() {
+        Ok(response) => response,
+        Err(error) => return Err(TranslationError),
+    };
+
     Ok(response)
 }
