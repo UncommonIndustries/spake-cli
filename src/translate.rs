@@ -46,12 +46,13 @@ pub struct TranslationResponse {
     pub text: String,
 }
 
-pub fn translate_string(input: TranslationRequest) -> Result<TranslationResponse, Error> {
+pub fn translate_string(
+    input: TranslationRequest,
+    host: String,
+) -> Result<TranslationResponse, Error> {
     let client = Client::new();
 
-    let request = client
-        .post("http://localhost:8000/api/v1/translate")
-        .json(&input);
+    let request = client.post(host).json(&input);
 
     let res = request.send()?;
     let response: TranslationResponse = res.json()?;
