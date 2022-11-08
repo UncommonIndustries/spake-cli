@@ -4,7 +4,7 @@ rust implemented CLI for uncommon Spake.
 
 ## Usage
     
-If you have this repository cloned, you can run the CLI  locally with ```cargo install -p .```
+If you have this repository cloned, you can run the CLI  locally with ```cargo install --path .```
 
 ### Installing from a distribution
 Currently the package is not distributed, but you can build it yourself with ```cargo build --release```

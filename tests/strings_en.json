@@ -3,13 +3,13 @@
         "string" : "hello world"
     },
     "myNameIs": {
-        "string": "my name is { user_name }.",
+        "string": "Welcome ${ user_name } to the application! ${ application_name } is a great application.",
         "example_keys": [{
             "user_name" : "Justin"
         }]
     },
     "iLike" : {
-        "string": "I like to { thing_one } and { thing_two }.",
+        "string": "I like to ${thing_one} and ${thing_two}.",
         "example_keys": [{"thing_one": "play football"}, {"thing_two": "eat pizza"}]
         
     }
