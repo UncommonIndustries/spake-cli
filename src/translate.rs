@@ -3,6 +3,8 @@ use reqwest::Error;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
+use crate::params::API_ROUTE;
+
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 pub enum ValidTargetLanguages {
     es,
@@ -46,13 +48,17 @@ pub struct TranslationResponse {
     pub text: String,
 }
 
+fn build_api_endpoint(host: String) -> String {
+    format!("{}/{}", host, API_ROUTE,)
+}
+
 pub fn translate_string(
     input: TranslationRequest,
     host: String,
 ) -> Result<TranslationResponse, Error> {
     let client = Client::new();
-
-    let request = client.post(host).json(&input);
+    let fqdn = build_api_endpoint(host);
+    let request = client.post(fqdn).json(&input);
 
     let res = request.send()?;
     let response: TranslationResponse = res.json()?;

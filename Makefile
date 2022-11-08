@@ -4,7 +4,7 @@ build:
 	cargo build
 
 test: build
-	./target/debug/$(NAME) translate --host http://localhost:8000/api/v1/translate --path ./tests/strings_en.json -t de
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/strings_en.json -t de
 
 clean: 
 	cargo clean
