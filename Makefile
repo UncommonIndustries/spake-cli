@@ -10,7 +10,7 @@ clean:
 	cargo clean
 	-rm -rf dist/
 
-artifacts: mac-arm-dist mac-x86-dist 
+artifacts: mac-arm-dist mac-x86-dist linux-x86_64-dist
 
 mac-arm-dist:
 	cargo build --release --target aarch64-apple-darwin
