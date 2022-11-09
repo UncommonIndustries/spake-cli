@@ -7,6 +7,7 @@ use std::path::Path;
 use clap::{Args, Parser, Subcommand};
 
 mod file;
+mod params;
 mod translate;
 
 #[derive(Parser)]
@@ -32,6 +33,9 @@ struct TranslateArgs {
 
     #[arg(short, long, default_value = "es")]
     target_language: Option<String>,
+
+    #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
+    host: Option<String>,
 }
 
 fn main() {
@@ -74,12 +78,19 @@ fn main() {
                     from_language: source_language,
                     to_language: target_language,
                 };
-                let translation_result = translate::translate_string(request);
-                println!("{:?}", translation_result);
+                let translation_result =
+                    match translate::translate_string(request, args.host.clone().unwrap()) {
+                        Ok(translation) => translation,
+                        Err(error) => {
+                            println!("Error translating string: {}", error);
+                            return;
+                        }
+                    };
+
                 destination_hash_map.insert(
                     key.clone(),
                     file::Key {
-                        string: translation_result.unwrap().text,
+                        string: translation_result.text,
                         example_keys: None,
                     },
                 );

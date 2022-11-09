@@ -4,7 +4,7 @@ build:
 	cargo build
 
 test: build
-	./target/debug/$(NAME) --path ./tests/strings_en.json
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/strings_en.json -t de
 
 clean: 
 	cargo clean
@@ -25,7 +25,7 @@ mac-x86-dist:
 	tar -czvf ./dist/mac-x86/$(NAME)-mac-x86_64.tar.gz ./dist/mac-x86/$(NAME)
 
 linux-x86_64-dist:
-	cargo build --release --target x86_64-unknown-linux-gnu
+	cargo build --release --target x86_64-unknown-linux-musl
 	mkdir -p ./dist/linux-x86_64
 	cp ./target/x86_64-unknown-linux-gnu/release/$(NAME) ./dist/linux-x86_64/$(NAME)
 	tar -czvf ./dist/linux-x86_64/$(NAME).tar.gz ./dist/linux-x86_64/$(NAME)
