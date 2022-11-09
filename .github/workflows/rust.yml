@@ -21,4 +21,10 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
       - name: Test compilation of necessary Artifacts
-        run: make artifacts
+        run: make linux-x86_64-dist
+  build-mac-os:
+    runs-on: macos-latest
+      - name: Build x86 macos Artifact
+        run: make mac-x86-dist
+      - name: Build Arm64 macos artifact 
+        run: make mac-arm-dist
