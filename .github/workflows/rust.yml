@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: prerequisites
-        run: apt install build-essential
+        run: sudo apt install build-essential
       - name: Build
         run: cargo build --verbose
       - name: Run tests
