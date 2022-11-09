@@ -14,7 +14,7 @@ artifacts: mac-arm-dist mac-x86-dist linux-x86_64-dist
 
 mac-arm-dist:
 	rustup target add aarch64-apple-darwin
-	cargo build --release --target aarch64-apple-darwin
+	TARGET_CC=clang TARGET_AR=llvm-ar cargo build --release --target aarch64-apple-darwin
 	mkdir -p ./dist/mac-arm
 	cp ./target/aarch64-apple-darwin/release/$(NAME) ./dist/mac-arm/$(NAME)
 	tar -czvf ./dist/mac-arm/$(NAME)-mac-arm64.tar.gz ./dist/mac-arm/$(NAME)
