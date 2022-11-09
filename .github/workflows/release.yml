@@ -27,12 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build artifact
-        run: make mac-x86-dist
+        run: make mac-x86_64-dist
       - name: Upload macOS x86_64 artifacts to release
         uses: svenstaro/upload-release-action@2.3.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./dist/mac-x86/spake-cli-mac-x86_64.tar.gz
+          file: ./dist/mac-x86_64/spake-cli-mac-x86_64.tar.gz
           asset_name: spake-cli_$tag_macos-x86_64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
