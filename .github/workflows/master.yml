@@ -1,4 +1,4 @@
-name: regular-build
+name: master-build
 
 on:
   push:

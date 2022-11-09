@@ -2,23 +2,43 @@ use reqwest::blocking::Client;
 
 use serde::{Deserialize, Serialize};
 use std::error;
+
 use std::str::FromStr;
 
 use crate::params::API_ROUTE;
 use url::{ParseError, Url};
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[allow(non_camel_case_types)]
 pub enum ValidTargetLanguages {
+    en,
     es,
     fr,
     de,
     it,
 }
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[allow(non_camel_case_types)]
 pub enum ValidSourceLanguages {
     en,
+    es,
+    fr,
+    de,
+    it,
 }
-
+impl FromStr for ValidSourceLanguages {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "en" => Ok(ValidSourceLanguages::en),
+            "es" => Ok(ValidSourceLanguages::es),
+            "fr" => Ok(ValidSourceLanguages::fr),
+            "de" => Ok(ValidSourceLanguages::de),
+            "it" => Ok(ValidSourceLanguages::it),
+            _ => Err(format!("{} is not a valid source language", s)),
+        }
+    }
+}
 impl FromStr for ValidTargetLanguages {
     type Err = String;
 
@@ -28,6 +48,7 @@ impl FromStr for ValidTargetLanguages {
             "fr" => Ok(ValidTargetLanguages::fr),
             "de" => Ok(ValidTargetLanguages::de),
             "it" => Ok(ValidTargetLanguages::it),
+            "en" => Ok(ValidTargetLanguages::en),
             _ => Err(format!("{} is not a valid target language", s)),
         }
     }
@@ -74,9 +95,20 @@ pub fn translate_string(
         Err(err) => return Err(err.into()),
     };
 
+    match res.status() {
+        reqwest::StatusCode::OK => (),
+        _ => {
+            println!("Error: {:?}", res.json::<serde_json::Value>());
+            return Err("Error making request".into());
+        }
+    }
+
     let response: TranslationResponse = match res.json() {
         Ok(response) => response,
-        Err(err) => return Err(err.into()),
+        Err(err) => {
+            println!("Error: {:?}", err);
+            return Err(err.into());
+        }
     };
 
     Ok(response)
