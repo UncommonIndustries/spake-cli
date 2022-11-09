@@ -12,6 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Update Build Chain for ARM Macs
+        run: rustup target add aarch64-apple-darwin
+      - name: Update build chain for x86 Macs
+        run: rustup target add x86_64-apple-darwin
       - name: Build
         run: make artifacts
       - name: Upload files to a GitHub release
