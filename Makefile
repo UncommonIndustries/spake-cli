@@ -6,6 +6,9 @@ build:
 test: build
 	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/strings_en.json -t de
 	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./strings/strings_de.json -t en -s de
+	
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/strings_en.json -t fr -s en
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./strings/strings_fr.json -t it -s fr
 
 clean: 
 	cargo clean
