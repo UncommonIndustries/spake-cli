@@ -21,3 +21,34 @@ jobs:
           asset_name: spake-cli_$tag_linux-x86_64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
+  build-macOS-x86_64:
+    name: Publish x86_64 MacOS binaries
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build artifact
+        run: make mac-x86-dist
+      - name: Upload macOS x86_64 artifacts to release
+        uses: svenstaro/upload-release-action@2.3.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./dist/mac-x86/spake-cli-mac-x86_64.tar.gz
+          asset_name: spake-cli_$tag_macos-x86_64.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  build-macOS-arm_64:
+    name: Publish aarm64 MacOS binaries
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build artifact
+        run: make mac-arm-dist
+      - name: Upload macOS aarm64 artifacts to release
+        uses: svenstaro/upload-release-action@2.3.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./dist/mac-arm/spake-cli-mac-arm64.tar.gz
+          asset_name: spake-cli_$tag_mac-arm64.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
