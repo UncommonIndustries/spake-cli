@@ -15,16 +15,15 @@ artifacts: mac-arm-dist mac-x86-dist linux-x86_64-dist
 mac-arm-dist:
 	rustup target add aarch64-apple-darwin
 	cargo build  --release --target aarch64-apple-darwin
-	mkdir -p ./dist/mac-arm
-	cp ./target/aarch64-apple-darwin/release/$(NAME) ./dist/mac-arm/$(NAME)
-	tar -czvf ./dist/mac-arm/$(NAME)-mac-arm64.tar.gz ./dist/mac-arm/$(NAME)
+	mkdir -p dist/mac-arm
+	tar -czvf dist/mac-arm/$(NAME)-mac-arm64.tar.gz -C ./target/aarch64-apple-darwin/release/ spake-cli
 
-mac-x86-dist:
+mac-x86_64-dist:
 	rustup target add x86_64-apple-darwin
 	cargo build --release --target x86_64-apple-darwin
-	mkdir -p ./dist/mac-x86
-	cp ./target/x86_64-apple-darwin/release/$(NAME) ./dist/mac-x86/$(NAME)
-	tar -czvf ./dist/mac-x86/$(NAME)-mac-x86_64.tar.gz ./dist/mac-x86/$(NAME)
+	mkdir -p ./dist/mac-x86_64
+	tar -czvf ./dist/mac-x86_64/$(NAME)-mac-x86_64.tar.gz -C ./target/x86_64-apple-darwin/release/ spake-cli
+
 	
 linux-x86_64-dist:
 	rustup target add x86_64-unknown-linux-gnu
