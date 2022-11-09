@@ -68,7 +68,7 @@ fn main() {
             ) {
                 Ok(language) => language,
                 Err(error) => {
-                    println!("source language not supported{}", error);
+                    println!("source language not supported: {}", error);
                     return;
                 }
             };
