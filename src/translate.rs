@@ -10,7 +10,6 @@ use url::{ParseError, Url};
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 #[allow(non_camel_case_types)]
-
 pub enum ValidTargetLanguages {
     en,
     es,
