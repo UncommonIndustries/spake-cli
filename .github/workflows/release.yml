@@ -49,6 +49,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./dist/mac-arm/spake-cli-mac-arm64.tar.gz
-          asset_name: spake-cli_$tag_mac-arm64.tar.gz
+          asset_name: spake-cli_$tag_macos-arm64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
