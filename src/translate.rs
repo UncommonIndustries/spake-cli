@@ -8,30 +8,33 @@ use crate::params::API_ROUTE;
 use url::{ParseError, Url};
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[allow(non_snake_case)]
+
 pub enum ValidTargetLanguages {
-    en,
-    es,
-    fr,
-    de,
-    it,
+    En,
+    Es,
+    Fr,
+    De,
+    It,
 }
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[allow(non_snake_case)]
 pub enum ValidSourceLanguages {
-    en,
-    es,
-    fr,
-    de,
-    it,
+    En,
+    Es,
+    Fr,
+    De,
+    It,
 }
 impl FromStr for ValidSourceLanguages {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "en" => Ok(ValidSourceLanguages::en),
-            "es" => Ok(ValidSourceLanguages::es),
-            "fr" => Ok(ValidSourceLanguages::fr),
-            "de" => Ok(ValidSourceLanguages::de),
-            "it" => Ok(ValidSourceLanguages::it),
+            "en" => Ok(ValidSourceLanguages::En),
+            "es" => Ok(ValidSourceLanguages::Es),
+            "fr" => Ok(ValidSourceLanguages::Fr),
+            "de" => Ok(ValidSourceLanguages::De),
+            "it" => Ok(ValidSourceLanguages::It),
             _ => Err(format!("{} is not a valid source language", s)),
         }
     }
@@ -41,11 +44,11 @@ impl FromStr for ValidTargetLanguages {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "es" => Ok(ValidTargetLanguages::es),
-            "fr" => Ok(ValidTargetLanguages::fr),
-            "de" => Ok(ValidTargetLanguages::de),
-            "it" => Ok(ValidTargetLanguages::it),
-            "en" => Ok(ValidTargetLanguages::en),
+            "es" => Ok(ValidTargetLanguages::Es),
+            "fr" => Ok(ValidTargetLanguages::Fr),
+            "de" => Ok(ValidTargetLanguages::De),
+            "it" => Ok(ValidTargetLanguages::It),
+            "en" => Ok(ValidTargetLanguages::En),
             _ => Err(format!("{} is not a valid target language", s)),
         }
     }
@@ -94,7 +97,10 @@ pub fn translate_string(
 
     let response: TranslationResponse = match res.json() {
         Ok(response) => response,
-        Err(err) => return Err(err.into()),
+        Err(err) => {
+            println!("Error: {:?}", err);
+            return Err(err.into());
+        }
     };
 
     Ok(response)
