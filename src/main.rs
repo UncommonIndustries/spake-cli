@@ -34,6 +34,9 @@ struct TranslateArgs {
     #[arg(short, long, default_value = "es")]
     target_language: Option<String>,
 
+    #[arg(short, long, default_value = "en")]
+    source_language: Option<String>,
+
     #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
     host: Option<String>,
 }
@@ -60,7 +63,15 @@ fn main() {
                         return;
                     }
                 };
-            let source_language = translate::ValidSourceLanguages::en;
+            let source_language = match translate::ValidSourceLanguages::from_str(
+                args.source_language.as_ref().unwrap(),
+            ) {
+                Ok(language) => language,
+                Err(error) => {
+                    println!("source language not supported{}", error);
+                    return;
+                }
+            };
 
             let json = match file::get_json(source_path.to_string()) {
                 Ok(json) => json,
