@@ -24,7 +24,8 @@ jobs:
         run: make linux-x86_64-dist
   build-mac-os:
     runs-on: macos-latest
+    steps:
       - name: Build x86 macos Artifact
         run: make mac-x86-dist
-      - name: Build Arm64 macos artifact 
+      - name: Build Arm64 macos artifact
         run: make mac-arm-dist
