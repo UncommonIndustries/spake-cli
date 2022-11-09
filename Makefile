@@ -31,4 +31,4 @@ linux-x86_64-dist:
 	cargo build --release --target x86_64-unknown-linux-gnu
 	mkdir -p ./dist/linux-x86_64
 	cp ./target/x86_64-unknown-linux-gnu/release/$(NAME) ./dist/linux-x86_64/$(NAME)
-	tar -czvf ./dist/linux-x86_64/$(NAME).tar.gz ./dist/linux-x86_64/$(NAME)
+	tar -czvf ./dist/linux-x86_64/$(NAME)_linux-x86_64.tar.gz ./dist/linux-x86_64/$(NAME)
