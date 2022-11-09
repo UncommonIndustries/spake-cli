@@ -28,7 +28,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build x86 macos Artifact
-        run: make mac-x86-dist
+      - name: Build x86_64 macos Artifact
+        run: make mac-x86_64-dist
       - name: Build Arm64 macos artifact
         run: make mac-arm-dist

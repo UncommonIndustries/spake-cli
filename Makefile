@@ -24,7 +24,6 @@ mac-x86_64-dist:
 	mkdir -p ./dist/mac-x86_64
 	tar -czvf ./dist/mac-x86_64/$(NAME)-mac-x86_64.tar.gz -C ./target/x86_64-apple-darwin/release/ spake-cli
 
-	
 linux-x86_64-dist:
 	rustup target add x86_64-unknown-linux-gnu
 	cargo build --release --target x86_64-unknown-linux-gnu
