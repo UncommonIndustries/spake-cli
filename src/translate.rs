@@ -2,39 +2,40 @@ use reqwest::blocking::Client;
 
 use serde::{Deserialize, Serialize};
 use std::error;
+
 use std::str::FromStr;
 
 use crate::params::API_ROUTE;
 use url::{ParseError, Url};
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[allow(non_snake_case)]
+#[allow(non_camel_case_types)]
 
 pub enum ValidTargetLanguages {
-    En,
-    Es,
-    Fr,
-    De,
-    It,
+    en,
+    es,
+    fr,
+    de,
+    it,
 }
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[allow(non_snake_case)]
+#[allow(non_camel_case_types)]
 pub enum ValidSourceLanguages {
-    En,
-    Es,
-    Fr,
-    De,
-    It,
+    en,
+    es,
+    fr,
+    de,
+    it,
 }
 impl FromStr for ValidSourceLanguages {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "en" => Ok(ValidSourceLanguages::En),
-            "es" => Ok(ValidSourceLanguages::Es),
-            "fr" => Ok(ValidSourceLanguages::Fr),
-            "de" => Ok(ValidSourceLanguages::De),
-            "it" => Ok(ValidSourceLanguages::It),
+            "en" => Ok(ValidSourceLanguages::en),
+            "es" => Ok(ValidSourceLanguages::es),
+            "fr" => Ok(ValidSourceLanguages::fr),
+            "de" => Ok(ValidSourceLanguages::de),
+            "it" => Ok(ValidSourceLanguages::it),
             _ => Err(format!("{} is not a valid source language", s)),
         }
     }
@@ -44,11 +45,11 @@ impl FromStr for ValidTargetLanguages {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "es" => Ok(ValidTargetLanguages::Es),
-            "fr" => Ok(ValidTargetLanguages::Fr),
-            "de" => Ok(ValidTargetLanguages::De),
-            "it" => Ok(ValidTargetLanguages::It),
-            "en" => Ok(ValidTargetLanguages::En),
+            "es" => Ok(ValidTargetLanguages::es),
+            "fr" => Ok(ValidTargetLanguages::fr),
+            "de" => Ok(ValidTargetLanguages::de),
+            "it" => Ok(ValidTargetLanguages::it),
+            "en" => Ok(ValidTargetLanguages::en),
             _ => Err(format!("{} is not a valid target language", s)),
         }
     }
