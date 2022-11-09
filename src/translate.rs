@@ -1,7 +1,7 @@
 use reqwest::blocking::Client;
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
+use std::error;
 use std::str::FromStr;
 
 use crate::params::API_ROUTE;
@@ -56,37 +56,27 @@ fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
     Ok(joined)
 }
 
-#[derive(Debug, Clone)]
-pub struct TranslationError;
-
-impl fmt::Display for TranslationError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO expand this to give better feedback to users.
-        write!(f, "Error translating string")
-    }
-}
-
 pub fn translate_string(
     input: TranslationRequest,
     host: String,
-) -> Result<TranslationResponse, TranslationError> {
+) -> Result<TranslationResponse, Box<dyn error::Error>> {
     let client = Client::new();
     let fqdn = build_api_endpoint(host);
     let fqdn = match fqdn {
         Ok(fqdn) => fqdn,
-        Err(error) => return Err(TranslationError),
+        Err(err) => return Err(err.into()),
     };
 
     let request = client.post(fqdn).json(&input);
 
     let res = match request.send() {
         Ok(res) => res,
-        Err(error) => return Err(TranslationError),
+        Err(err) => return Err(err.into()),
     };
 
     let response: TranslationResponse = match res.json() {
         Ok(response) => response,
-        Err(error) => return Err(TranslationError),
+        Err(err) => return Err(err.into()),
     };
 
     Ok(response)
