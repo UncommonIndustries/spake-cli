@@ -89,7 +89,7 @@ fn main() {
                     from_language: source_language,
                     to_language: target_language,
                 };
-                println!("Translating: {:?}...", request);
+
                 let translation_result =
                     match translate::translate_string(request, args.host.clone().unwrap()) {
                         Ok(translation) => translation,
