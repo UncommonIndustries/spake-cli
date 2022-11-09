@@ -27,8 +27,8 @@ mac-x86-dist:
 	tar -czvf ./dist/mac-x86/$(NAME)-mac-x86_64.tar.gz ./dist/mac-x86/$(NAME)
 	
 linux-x86_64-dist:
-	rustup target add x86_64-unknown-linux-musl
-	cargo build --release --target x86_64-unknown-linux-musl
+	rustup target add x86_64-unknown-linux-gnu
+	cargo build --release --target x86_64-unknown-linux-gnu
 	mkdir -p ./dist/linux-x86_64
 	cp ./target/x86_64-unknown-linux-gnu/release/$(NAME) ./dist/linux-x86_64/$(NAME)
 	tar -czvf ./dist/linux-x86_64/$(NAME).tar.gz ./dist/linux-x86_64/$(NAME)
