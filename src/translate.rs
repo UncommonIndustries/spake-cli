@@ -96,6 +96,14 @@ pub fn translate_string(
         Err(err) => return Err(err.into()),
     };
 
+    match res.status() {
+        reqwest::StatusCode::OK => (),
+        _ => {
+            println!("Error: {:?}", res.json::<serde_json::Value>());
+            return Err("Error making request".into());
+        }
+    }
+
     let response: TranslationResponse = match res.json() {
         Ok(response) => response,
         Err(err) => {
