@@ -32,10 +32,10 @@ struct TranslateArgs {
     api_key: Option<String>,
 
     #[arg(short, long, default_value = "es")]
-    target_language: Option<String>,
+    target_language: Option<translate::ValidTargetLanguages>,
 
     #[arg(short, long, default_value = "en")]
-    source_language: Option<String>,
+    source_language: Option<translate::ValidSourceLanguages>,
 
     #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
     host: Option<String>,
@@ -53,25 +53,10 @@ fn main() {
             }
 
             let target_language_argument = args.target_language.as_ref().unwrap();
-            let target_file_path = format!("strings/strings_{}.json", target_language_argument);
+            let target_file_path = format!("strings/strings_{:#?}.json", target_language_argument);
 
-            let target_language =
-                match translate::ValidTargetLanguages::from_str(&target_language_argument) {
-                    Ok(language) => language,
-                    Err(error) => {
-                        println!("target language not supported{}", error);
-                        return;
-                    }
-                };
-            let source_language = match translate::ValidSourceLanguages::from_str(
-                args.source_language.as_ref().unwrap(),
-            ) {
-                Ok(language) => language,
-                Err(error) => {
-                    println!("source language not supported: {}", error);
-                    return;
-                }
-            };
+            let target_language = target_language_argument;
+            let source_language = args.source_language.as_ref().unwrap();
 
             let json = match file::get_json(source_path.to_string()) {
                 Ok(json) => json,
@@ -86,8 +71,8 @@ fn main() {
             for (key, value) in json.iter() {
                 let request = translate::TranslationRequest {
                     text: value.string.clone(),
-                    from_language: source_language,
-                    to_language: target_language,
+                    from_language: *source_language,
+                    to_language: *target_language,
                 };
 
                 let translation_result =
