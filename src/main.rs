@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::fs;
-use std::str::FromStr;
 
 use std::path::Path;
 
@@ -28,8 +27,8 @@ struct TranslateArgs {
     #[arg(short, long, default_value = "strings/strings_en.json")]
     path: Option<String>,
 
-    #[arg(short, long)]
-    api_key: Option<String>,
+    #[arg(short, long, env = "SPAKE_API_KEY")]
+    api_key: String,
 
     #[arg(short, long, default_value = "es")]
     target_language: Option<translate::ValidTargetLanguages>,
@@ -57,6 +56,8 @@ fn main() {
 
             let target_language = target_language_argument;
             let source_language = args.source_language.as_ref().unwrap();
+
+            let api_key = args.api_key.as_str();
 
             let json = match file::get_json(source_path.to_string()) {
                 Ok(json) => json,
