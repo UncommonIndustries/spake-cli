@@ -81,6 +81,7 @@ fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
 pub fn translate_string(
     input: TranslationRequest,
     host: String,
+    api_key: String,
 ) -> Result<TranslationResponse, Box<dyn error::Error>> {
     let client = Client::new();
     let fqdn = build_api_endpoint(host);
@@ -89,7 +90,7 @@ pub fn translate_string(
         Err(err) => return Err(err.into()),
     };
 
-    let request = client.post(fqdn).json(&input);
+    let request = client.post(fqdn).json(&input).header("X-API-KEY", api_key);
 
     let res = match request.send() {
         Ok(res) => res,

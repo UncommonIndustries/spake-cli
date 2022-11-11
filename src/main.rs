@@ -57,7 +57,7 @@ fn main() {
             let target_language = target_language_argument;
             let source_language = args.source_language.as_ref().unwrap();
 
-            let api_key = args.api_key.as_str();
+            let api_key = &args.api_key;
 
             let json = match file::get_json(source_path.to_string()) {
                 Ok(json) => json,
@@ -76,14 +76,17 @@ fn main() {
                     to_language: *target_language,
                 };
 
-                let translation_result =
-                    match translate::translate_string(request, args.host.clone().unwrap()) {
-                        Ok(translation) => translation,
-                        Err(error) => {
-                            println!("Error translating string: {}", error);
-                            return;
-                        }
-                    };
+                let translation_result = match translate::translate_string(
+                    request,
+                    args.host.clone().unwrap(),
+                    api_key.clone(),
+                ) {
+                    Ok(translation) => translation,
+                    Err(error) => {
+                        println!("Error translating string: {}", error);
+                        return;
+                    }
+                };
 
                 destination_hash_map.insert(
                     key.clone(),
