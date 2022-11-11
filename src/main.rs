@@ -31,10 +31,10 @@ struct TranslateArgs {
     api_key: String,
 
     #[arg(short, long, default_value = "es")]
-    target_language: Option<translate::ValidTargetLanguages>,
+    target_language: Option<translate::models::ValidTargetLanguages>,
 
     #[arg(short, long, default_value = "en")]
-    source_language: Option<translate::ValidSourceLanguages>,
+    source_language: Option<translate::models::ValidSourceLanguages>,
 
     #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
     host: Option<String>,
@@ -70,13 +70,13 @@ fn main() {
             let mut destination_hash_map: HashMap<String, file::Key> = HashMap::new();
 
             for (key, value) in json.iter() {
-                let request = translate::TranslationRequest {
+                let request = translate::translation_request::TranslationRequest {
                     text: value.string.clone(),
                     from_language: *source_language,
                     to_language: *target_language,
                 };
 
-                let translation_result = match translate::translate_string(
+                let translation_result = match translate::translate::translate_string(
                     request,
                     args.host.clone().unwrap(),
                     api_key.clone(),
