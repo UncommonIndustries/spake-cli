@@ -8,8 +8,8 @@ use super::translation_response::TranslationResponse;
 use crate::params::API_ROUTE;
 use url::{ParseError, Url};
 
-fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
-    let base = Url::parse(&host).expect("Invalid host");
+pub(crate) fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
+    let base = Url::parse(&host)?;
     let joined = base.join(API_ROUTE)?;
     Ok(joined)
 }
