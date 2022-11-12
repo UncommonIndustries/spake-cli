@@ -21,3 +21,14 @@ pub fn get_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
     let json: HashMap<String, Key> = serde_json::from_str(&contents)?;
     Ok(json)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_json() {
+        let json = get_json("./tests/test.json".to_string()).unwrap();
+        assert_eq!(json["test_key"].string, "test_value");
+    }
+}
