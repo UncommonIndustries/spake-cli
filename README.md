@@ -19,7 +19,7 @@ run ```spake-cli --help``` for more information
 The code is extremely simple at the moment. If you want to contribute, please open an issue or a PR.
 A few good things in the near term are: 
 1) ~~Adding a test suite~~
-2) ~~Making the CLI use an asynchronous runtime and use a non blocking client. ~~
+2) ~~Making the CLI use an asynchronous runtime and use a non blocking client~~
 3) Clean up the code broadly. (Take code chunks from main() and move to their own functions, etc.)
 4) Expand State and configuration
-5) ~~Allow reliance of Env variables for API Key. ~~
+5) ~~Allow reliance of Env variables for API Key~~
