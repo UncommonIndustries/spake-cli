@@ -75,7 +75,7 @@ async fn main() {
                     let key = key.clone();
                     let value = value.clone();
                     async move {
-                        let translationRequest =
+                        let translation_request =
                             translate::translation_request::TranslationRequest {
                                 text: value.string.clone(),
                                 from_language: *source_language,
@@ -83,7 +83,7 @@ async fn main() {
                             };
 
                         let translation = translate::translate::translate_string(
-                            translationRequest,
+                            translation_request,
                             args.host.clone().unwrap(),
                             api_key.clone(),
                         )
@@ -91,7 +91,7 @@ async fn main() {
                         (key, translation)
                     }
                 })
-                .buffer_unordered(4);
+                .buffer_unordered(9);
             let destination_hash_map: HashMap<String, file::Key> = HashMap::new();
             let q = translation_result
                 .fold(
@@ -118,7 +118,7 @@ async fn main() {
             let json = match serde_json::to_string_pretty(&q) {
                 Ok(json) => json,
                 Err(error) => {
-                    println!("Internat Error converting json to string: {}", error);
+                    println!("Error converting json to string: {}", error);
                     return;
                 }
             };
