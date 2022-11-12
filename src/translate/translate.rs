@@ -1,5 +1,4 @@
-use reqwest::blocking::Client;
-
+use reqwest::Client;
 use std::error;
 
 use super::translation_request::TranslationRequest;
@@ -14,7 +13,7 @@ pub(crate) fn build_api_endpoint(host: String) -> Result<Url, ParseError> {
     Ok(joined)
 }
 
-pub fn translate_string(
+pub async fn translate_string(
     input: TranslationRequest,
     host: String,
     api_key: String,
@@ -28,7 +27,7 @@ pub fn translate_string(
 
     let request = client.post(fqdn).json(&input).header("X-API-KEY", api_key);
 
-    let res = match request.send() {
+    let res = match request.send().await {
         Ok(res) => res,
         Err(err) => return Err(err.into()),
     };
@@ -36,12 +35,11 @@ pub fn translate_string(
     match res.status() {
         reqwest::StatusCode::OK => (),
         _ => {
-            println!("Error: {:?}", res.json::<serde_json::Value>());
             return Err("Error making request".into());
         }
     }
 
-    let response: TranslationResponse = match res.json() {
+    let response: TranslationResponse = match res.json().await {
         Ok(response) => response,
         Err(err) => {
             println!("Error: {:?}", err);

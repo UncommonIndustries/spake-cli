@@ -5,6 +5,8 @@ use std::path::Path;
 
 use clap::{Args, Parser, Subcommand};
 
+use futures::{stream, StreamExt};
+
 mod file;
 mod params;
 mod translate;
@@ -40,7 +42,8 @@ struct TranslateArgs {
     host: Option<String>,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let cli = CLI::parse();
 
     match &cli.command {
@@ -67,37 +70,52 @@ fn main() {
                 }
             };
 
-            let mut destination_hash_map: HashMap<String, file::Key> = HashMap::new();
+            let translation_result = stream::iter(json)
+                .map(|(key, value)| {
+                    let key = key.clone();
+                    let value = value.clone();
+                    async move {
+                        let translationRequest =
+                            translate::translation_request::TranslationRequest {
+                                text: value.string.clone(),
+                                from_language: *source_language,
+                                to_language: *target_language,
+                            };
 
-            for (key, value) in json.iter() {
-                let request = translate::translation_request::TranslationRequest {
-                    text: value.string.clone(),
-                    from_language: *source_language,
-                    to_language: *target_language,
-                };
-
-                let translation_result = match translate::translate::translate_string(
-                    request,
-                    args.host.clone().unwrap(),
-                    api_key.clone(),
-                ) {
-                    Ok(translation) => translation,
-                    Err(error) => {
-                        println!("Error translating string: {}", error);
-                        return;
+                        let translation = translate::translate::translate_string(
+                            translationRequest,
+                            args.host.clone().unwrap(),
+                            api_key.clone(),
+                        )
+                        .await;
+                        (key, translation)
                     }
-                };
-
-                destination_hash_map.insert(
-                    key.clone(),
-                    file::Key {
-                        string: translation_result.text,
-                        example_keys: None,
+                })
+                .buffer_unordered(4);
+            let destination_hash_map: HashMap<String, file::Key> = HashMap::new();
+            let q = translation_result
+                .fold(
+                    destination_hash_map,
+                    |mut destination_hash_map, (key, value)| async {
+                        let translation = match value {
+                            Ok(translation) => translation,
+                            Err(error) => {
+                                println!("Error translating string: {}", error);
+                                return destination_hash_map;
+                            }
+                        };
+                        let translated_result = file::Key {
+                            string: translation.text,
+                            example_keys: None,
+                        };
+                        destination_hash_map.insert(key, translated_result);
+                        destination_hash_map
                     },
-                );
-            }
+                )
+                .await;
+
             let target_file = target_file_path.to_string();
-            let json = match serde_json::to_string_pretty(&destination_hash_map) {
+            let json = match serde_json::to_string_pretty(&q) {
                 Ok(json) => json,
                 Err(error) => {
                     println!("Internat Error converting json to string: {}", error);
