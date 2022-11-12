@@ -8,7 +8,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 // File.rs is designed to deal with reading and writing string files.
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Key {
     pub string: String, // the value of the string that goes into a component
     pub example_keys: Option<LinkedList<HashMap<String, String>>>, // example keys that go into the string when it's valid
@@ -20,4 +20,15 @@ pub fn get_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
     file.read_to_string(&mut contents)?;
     let json: HashMap<String, Key> = serde_json::from_str(&contents)?;
     Ok(json)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_json() {
+        let json = get_json("./tests/test.json".to_string()).unwrap();
+        assert_eq!(json["test_key"].string, "test_value");
+    }
 }

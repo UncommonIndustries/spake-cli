@@ -11,3 +11,4 @@ target/
 strings/
 dist/
 .DS_Store
+tests/long/
