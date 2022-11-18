@@ -26,7 +26,7 @@ enum Commands {
 
 #[derive(Args)]
 struct TranslateArgs {
-    #[arg(short, long, default_value = "strings/strings_en.json")]
+    #[arg(short, long, default_value = "src/strings/strings_en.json")]
     path: Option<String>,
 
     #[arg(short, long, env = "SPAKE_API_KEY")]
