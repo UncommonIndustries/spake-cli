@@ -4,10 +4,10 @@ build:
 	cargo build
 
 test: build
-	./target/debug/$(NAME) translate -a wp22X8k4qck.r3GERB0c3P5Yr34FjLDHvcm3OHgne0eM  --host http://localhost:8000 --path ./tests/strings_en.json -t de
-	./target/debug/$(NAME) translate -a wp22X8k4qck.r3GERB0c3P5Yr34FjLDHvcm3OHgne0eM  --host http://localhost:8000 --path ./strings/strings_de.json -t en -s de
-	./target/debug/$(NAME) translate -a wp22X8k4qck.r3GERB0c3P5Yr34FjLDHvcm3OHgne0eM  --host http://localhost:8000 --path ./tests/long/strings_en.json -t fr -s en
-	./target/debug/$(NAME) translate -a wp22X8k4qck.r3GERB0c3P5Yr34FjLDHvcm3OHgne0eM  --host http://localhost:8000 --path ./strings/strings_fr.json -t it -s fr
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/strings_en.json -t de
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./strings/strings_de.json -t en -s de
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/long/strings_en.json -t fr -s en
+	./target/debug/$(NAME) translate --host http://localhost:8000 --path ./strings/strings_fr.json -t it -s fr
 
 clean: 
 	cargo clean
