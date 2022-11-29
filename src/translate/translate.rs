@@ -34,6 +34,27 @@ pub async fn translate_string(
 
     match res.status() {
         reqwest::StatusCode::OK => (),
+        reqwest::StatusCode::BAD_REQUEST => {
+            return Err("Bad request".into());
+        }
+        reqwest::StatusCode::UNAUTHORIZED => {
+            let message = res.json::<serde_json::Value>().await?;
+            let details = message["detail"].to_string();
+            let response_string = format!("Forbidden: {}", details);
+            return Err(response_string.into());
+        }
+        reqwest::StatusCode::FORBIDDEN => {
+            let message = res.json::<serde_json::Value>().await?;
+            let details = message["detail"].to_string();
+            let response_string = format!("Forbidden: {}", details);
+            return Err(response_string.into());
+        }
+        reqwest::StatusCode::NOT_FOUND => {
+            return Err("Not found".into());
+        }
+        reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
+            return Err("Internal server error".into());
+        }
         _ => {
             return Err("Error making request".into());
         }
