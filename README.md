@@ -1,5 +1,5 @@
-# spake-cli-redux
-rust implemented CLI for uncommon Spake. 
+# spake-cli
+Spake CLI for accessing translation services on the spake platform. 
 
 
 ## Usage
