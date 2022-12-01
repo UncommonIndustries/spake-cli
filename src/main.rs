@@ -62,15 +62,21 @@ async fn main() {
 
             let api_key = &args.api_key;
 
-            let json = match file::get_json(source_path.to_string()) {
+            let source_json = match file::get_json(source_path.to_string()) {
                 Ok(json) => json,
                 Err(error) => {
                     println!("Error reading json file: {}", error);
                     return;
                 }
             };
+            // kind of a weird hack to do this;; we can preemptively identify which keys we should skip and skip them here.
+            let mut destination_hash_map: HashMap<String, file::Key> = source_json.clone();
+            let mut to_translate: HashMap<String, file::Key> = source_json.clone();
 
-            let translation_result = stream::iter(json)
+            destination_hash_map.retain(|_, v| v.translate == Some(false));
+            to_translate.retain(|_, v| v.translate == None || v.translate == Some(true));
+
+            let translation_result = stream::iter(to_translate)
                 .map(|(key, value)| {
                     let key = key.clone();
                     let value = value.clone();
@@ -92,7 +98,7 @@ async fn main() {
                     }
                 })
                 .buffer_unordered(9);
-            let destination_hash_map: HashMap<String, file::Key> = HashMap::new();
+
             let q = translation_result
                 .fold(
                     destination_hash_map,
@@ -107,6 +113,7 @@ async fn main() {
                         let translated_result = file::Key {
                             string: translation.text,
                             example_keys: None,
+                            translate: None,
                         };
                         destination_hash_map.insert(key, translated_result);
                         destination_hash_map

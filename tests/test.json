@@ -6,5 +6,9 @@
         "user_name": "Justin"
       }
     ]
+  },
+  "ToBeSkipped": {
+    "string": "We're glad you're back, ${userName}!",
+    "translate": false
   }
 }

@@ -12,6 +12,7 @@ use std::io::prelude::*;
 pub struct Key {
     pub string: String, // the value of the string that goes into a component
     pub example_keys: Option<LinkedList<HashMap<String, String>>>, // example keys that go into the string when it's valid
+    pub translate: Option<bool>, // whether or not the string should be translated
 }
 
 pub fn get_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
@@ -30,5 +31,11 @@ mod tests {
     fn test_get_json() {
         let json = get_json("./tests/test.json".to_string()).unwrap();
         assert_eq!(json["test_key"].string, "test_value");
+    }
+    #[test]
+    fn test_to_be_skipped() {
+        let json = get_json("./tests/test.json".to_string()).unwrap();
+
+        assert_eq!(json["ToBeSkipped"].translate, Some(false));
     }
 }
