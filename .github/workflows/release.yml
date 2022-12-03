@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set Version Number
         run: |
-          export GH_VERSION="v0.2.3"
+          export GH_VERSION=${{ github.ref }}
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
           echo $CLEANED_VERSION
           sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set Version Number
         run: |
-          export GH_VERSION="v0.2.3"
+          export GH_VERSION=${{ github.ref }}
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
           echo $CLEANED_VERSION
           sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set Version Number
         run: |
-          export GH_VERSION="v0.2.3"
+          export GH_VERSION=${{ github.ref }}
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
           echo $CLEANED_VERSION
           sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
