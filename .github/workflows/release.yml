@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Version
+        run: make version
       - name: Build
         run: make linux-x86_64-dist
       - name: Upload files to a GitHub release
@@ -26,6 +28,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Version
+        run: make version
       - name: Build artifact
         run: make mac-x86_64-dist
       - name: Upload macOS x86_64 artifacts to release
@@ -42,6 +46,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Version
+        run: make version
       - name: Build artifact
         run: make mac-arm-dist
       - name: Upload macOS aarm64 artifacts to release

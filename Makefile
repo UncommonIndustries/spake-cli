@@ -14,9 +14,9 @@ clean:
 	cargo clean
 	-rm -rf dist/
 
-version:
+version: # note on macos you need to install the gnu version of sed and alias it.
 	$(eval VERSION := $(shell git describe --tags | sed 's/v//g' ))
-	gsed -i 's/0.0.0/${VERSION}/g' Cargo.toml
+	sed -i 's/0.0.0/${VERSION}/g' Cargo.toml
 
 artifacts: mac-arm-dist mac-x86-dist linux-x86_64-dist 
 
