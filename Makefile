@@ -14,9 +14,13 @@ clean:
 	cargo clean
 	-rm -rf dist/
 
+version:
+	$(eval VERSION := $(shell git describe --tags | sed 's/v//g' ))
+	gsed -i 's/0.0.0/${VERSION}/g' Cargo.toml
+
 artifacts: mac-arm-dist mac-x86-dist linux-x86_64-dist 
 
-mac-arm-dist:
+mac-arm-dist: 
 	rustup target add aarch64-apple-darwin
 	cargo build  --release --target aarch64-apple-darwin
 	mkdir -p dist/mac-arm
