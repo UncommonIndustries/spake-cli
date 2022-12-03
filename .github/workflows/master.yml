@@ -26,7 +26,7 @@ jobs:
         run: |
           export GH_VERSION="v0.2.3"
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
-          sed -i 's/0.0.0/${VERSION}/g' Cargo.toml
+          sed -i 's/0.0.0/$(CLEANED_VERSION)/g' Cargo.toml
       - name: Build x86_64 linux dist
         run: make linux-x86_64-dist
   build-mac-os:
