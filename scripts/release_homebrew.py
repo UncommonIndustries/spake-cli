@@ -79,6 +79,7 @@ def release_homebrew(git_tag):
         f.write(formula)
     # git add, commit, and push
     commit_formula()
+    push_repo()
 
 
 if __name__ == "__main__":
