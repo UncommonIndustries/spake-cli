@@ -12,3 +12,5 @@ strings/
 dist/
 .DS_Store
 tests/long/
+homebrew-spake-cli/
+__pycache__/
