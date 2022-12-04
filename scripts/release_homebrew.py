@@ -59,7 +59,7 @@ def commit_formula():
 
 
 def push_repo():
-    command = ["git", "-C", "homebrew-spake-cli", "push", "--dry-run", repo]
+    command = ["git", "-C", "homebrew-spake-cli", "push", repo]
     subprocess.run(command, check=True)
 
 
