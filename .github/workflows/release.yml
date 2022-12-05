@@ -27,8 +27,8 @@ jobs:
           asset_name: spake-cli_$tag_linux-x86_64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
-  build-macOS-x86_64:
-    name: Publish x86_64 MacOS binaries
+  build-macOS-binaries:
+    name: Build and publish arm64 and amd64 macos binaries
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
           echo $CLEANED_VERSION
           sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
-      - name: Build artifact
+      - name: Build x86_64 artifact
         run: make mac-x86_64-dist
       - name: Upload macOS x86_64 artifacts to release
         uses: svenstaro/upload-release-action@2.3.0
@@ -48,19 +48,7 @@ jobs:
           asset_name: spake-cli_$tag_macos-x86_64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
-
-  build-macOS-arm_64:
-    name: Publish aarm64 MacOS binaries
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set Version Number
-        run: |
-          export GH_VERSION=${{ github.ref }}
-          export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
-          echo $CLEANED_VERSION
-          sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
-      - name: Build artifact
+      - name: Build arm64 artifact
         run: make mac-arm-dist
       - name: Upload macOS aarm64 artifacts to release
         uses: svenstaro/upload-release-action@2.3.0
@@ -70,3 +58,7 @@ jobs:
           asset_name: spake-cli_$tag_macos-arm64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
+      - name: Update Brew Formula repo 
+        run: | 
+        export HOMEBREW_GH_TOKEN=${{ secrets.HOMEBREW_GH_TOKEN }}
+        python3 scripts/release_homebrew.py ${{ github.ref }}
