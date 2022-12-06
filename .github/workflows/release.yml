@@ -58,7 +58,7 @@ jobs:
           asset_name: spake-cli_$tag_macos-arm64.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
-      - name: Update Brew Formula repo 
-        run: | 
-        export HOMEBREW_GH_TOKEN=${{ secrets.HOMEBREW_GH_TOKEN }}
-        python3 scripts/release_homebrew.py ${{ github.ref }}
+      - name: Update Brew Formula repo
+        run: |
+          export HOMEBREW_GH_TOKEN=${{ secrets.HOMEBREW_GH_TOKEN }}
+          python3 scripts/release_homebrew.py ${{ github.ref }}
