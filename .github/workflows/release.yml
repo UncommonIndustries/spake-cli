@@ -38,7 +38,7 @@ jobs:
           export GH_VERSION=${{ github.ref_name }}
           export CLEANED_VERSION=$(echo $GH_VERSION | sed "s/v//g")
           echo $CLEANED_VERSION
-          sed -i "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
+          sed -i -e "s/0.0.0/$CLEANED_VERSION/g" Cargo.toml
       - name: Build x86_64 artifact
         run: make mac-x86_64-dist
       - name: Upload macOS x86_64 artifacts to release
