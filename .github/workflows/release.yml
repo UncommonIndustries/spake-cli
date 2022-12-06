@@ -62,4 +62,4 @@ jobs:
       - name: Update Brew Formula repo
         run: |
           export HOMEBREW_GH_TOKEN=${{ secrets.HOMEBREW_GH_TOKEN }}
-          python3 scripts/release_homebrew.py ${{ github.ref }}
+          python3 scripts/release_homebrew.py ${{ github.ref_name }}
