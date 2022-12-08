@@ -150,7 +150,7 @@ async fn main() {
                 println!("Gathering strings");
             }
             Beta::Init => {
-                println!("Not Implemented yet. ✌️");
+                println!("Not Implemented yet. Coming soon!");
             }
         },
     }
