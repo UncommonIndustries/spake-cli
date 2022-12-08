@@ -162,6 +162,8 @@ async fn main() {
                 println!("Gathering strings");
             }
             Beta::Init(args) => {
+                // Init should create the appropriate strings folder and the base json file.
+                // it should have an optional parameter for doing the gather step too.
                 println!("Not Implemented yet. Coming soon!");
             }
         },
