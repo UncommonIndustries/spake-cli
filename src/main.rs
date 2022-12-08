@@ -29,8 +29,20 @@ enum Commands {
 
 #[derive(Subcommand)]
 enum Beta {
-    Gather,
-    Init,
+    Gather(GatherArgs),
+    Init(InitArgs),
+}
+
+#[derive(Args)]
+struct GatherArgs {
+    #[arg(short, long, default_value = "src/strings/strings_en.json")]
+    path: Option<String>,
+}
+
+#[derive(Args)]
+struct InitArgs {
+    #[arg(short, long, default_value = "src/strings/strings_en.json")]
+    base_path: Option<String>,
 }
 
 #[derive(Args)]
@@ -146,10 +158,10 @@ async fn main() {
             }
         }
         Commands::Beta(beta) => match beta {
-            Beta::Gather => {
+            Beta::Gather(args) => {
                 println!("Gathering strings");
             }
-            Beta::Init => {
+            Beta::Init(args) => {
                 println!("Not Implemented yet. Coming soon!");
             }
         },
