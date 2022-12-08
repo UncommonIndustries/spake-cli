@@ -22,6 +22,15 @@ struct CLI {
 #[derive(Subcommand)]
 enum Commands {
     Translate(TranslateArgs),
+
+    #[command(subcommand)]
+    Beta(Beta),
+}
+
+#[derive(Subcommand)]
+enum Beta {
+    Gather,
+    Init,
 }
 
 #[derive(Args)]
@@ -136,5 +145,13 @@ async fn main() {
                 Err(error) => println!("Error writing to file: {}", error),
             }
         }
+        Commands::Beta(beta) => match beta {
+            Beta::Gather => {
+                println!("Gathering strings");
+            }
+            Beta::Init => {
+                println!("Initializing project");
+            }
+        },
     }
 }
