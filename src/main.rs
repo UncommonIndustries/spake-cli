@@ -7,6 +7,9 @@ use clap::{Args, Parser, Subcommand};
 
 use futures::{stream, StreamExt};
 
+use std::ffi::OsStr;
+use walkdir::WalkDir;
+
 mod file;
 mod params;
 mod translate;
@@ -37,6 +40,9 @@ enum Beta {
 struct GatherArgs {
     #[arg(short, long, default_value = "src/strings/strings_en.json")]
     path: Option<String>,
+
+    #[arg(short, long, default_value = "src/")]
+    sourceCodeDirectory: Option<String>,
 }
 
 #[derive(Args)]
@@ -159,6 +165,23 @@ async fn main() {
         }
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
+                // Gather should gather all the strings from the codebase and create a json file.
+                // 1) traverse the structure and find all the js or jsx files
+                for entry in WalkDir::new("src/").into_iter().filter_map(|e| e.ok()) {
+                    let path = entry.path();
+                    if path.is_file() {
+                        let extension = path.extension();
+                        if extension == Some(OsStr::new("js"))
+                            || extension == Some(OsStr::new("jsx"))
+                        {
+                            println!("{}", path.display());
+                        }
+                    }
+                }
+                // 2) parse the files and find all the strings that are being passed to the translate function
+
+                // 3) create a json file with the strings and the keys
+
                 println!("Gathering strings");
             }
             Beta::Init(args) => {
