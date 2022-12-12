@@ -11,6 +11,7 @@ use std::ffi::OsStr;
 use walkdir::WalkDir;
 
 mod file;
+mod gather;
 mod params;
 mod translate;
 
@@ -166,6 +167,7 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
+
                 // 1) traverse the structure and find all the js or jsx files
                 for entry in WalkDir::new("src/").into_iter().filter_map(|e| e.ok()) {
                     let path = entry.path();
@@ -174,11 +176,11 @@ async fn main() {
                         if extension == Some(OsStr::new("js"))
                             || extension == Some(OsStr::new("jsx"))
                         {
+                            // 2) parse the files and find all the strings that are being passed to the translate function
                             println!("{}", path.display());
                         }
                     }
                 }
-                // 2) parse the files and find all the strings that are being passed to the translate function
 
                 // 3) create a json file with the strings and the keys
 
@@ -187,6 +189,7 @@ async fn main() {
             Beta::Init(args) => {
                 // Init should create the appropriate strings folder and the base json file.
                 // it should have an optional parameter for doing the gather step too.
+
                 println!("Not Implemented yet. Coming soon!");
             }
         },
