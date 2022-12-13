@@ -5,7 +5,9 @@ use std::fs; // 0.8
 
 use htmlstream;
 
-pub fn replace_raw_strings_in_file(file_path: &str) -> String {
+use crate::file::{get_json, Key};
+
+pub fn replace_raw_strings_in_file(file_path: &str, strings_file_path: &str) -> String {
     let file_data = fs::read_to_string(file_path).unwrap();
 
     let components = extract_components(&file_data);
@@ -34,7 +36,7 @@ pub fn replace_raw_strings_in_file(file_path: &str) -> String {
                     let new_key = generate_synthetic_key_name(file_path, cleaned_text);
 
                     // store the key and the old string in the file here
-                    // add_key_to_strings_file(new_key, tag.html.clone())
+                    add_key_to_strings_file(new_key.clone(), tag.html.clone(), strings_file_path);
 
                     // replace the string with the key in the tag element itself.✅
                     tag.html = create_evaluated_jsx_string(new_key);
@@ -55,9 +57,38 @@ pub fn replace_raw_strings_in_file(file_path: &str) -> String {
     for (k, v) in component_map.iter() {
         new_src = new_src.replace(k, v);
     }
-
+    fs::write(file_path, new_src);
     // rebuild the file from the components.
-    return new_src;
+    return "new_src".to_string();
+}
+
+fn add_key_to_strings_file(new_key: String, text_data: String, strings_file_path: &str) {
+    let keys = get_json(strings_file_path.to_string());
+    let mut keys = match keys {
+        Ok(k) => k,
+        Err(_) => {
+            println!("There was anerror reading in the keys file");
+            return;
+        }
+    };
+    if keys.contains_key(&new_key) {
+        println!("This key is already in the thing.")
+        // return an error and exit
+    }
+    let new_key_object = Key {
+        string: text_data,
+        example_keys: None,
+        translate: None,
+    };
+    keys.insert(new_key, new_key_object);
+    let json = match serde_json::to_string_pretty(&keys) {
+        Ok(json) => json,
+        Err(error) => {
+            println!("Error converting json to string: {}", error);
+            return;
+        }
+    };
+    fs::write(strings_file_path, json);
 }
 
 fn position_tag_iterator_to_string(

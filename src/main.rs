@@ -167,8 +167,10 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
-                println!("{:?}", args.sourceCodeDirectory);
+
                 let source_directory = args.sourceCodeDirectory.clone().unwrap();
+                let strings_file_path = args.path.clone().unwrap();
+
                 // 1) traverse the structure and find all the js or jsx files
                 for entry in WalkDir::new(source_directory)
                     .into_iter()
@@ -181,7 +183,10 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             // 2) parse the files and find all the strings that are being passed to the translate function
-                            gather::extractor::replace_raw_strings_in_file(path.to_str().unwrap());
+                            gather::extractor::replace_raw_strings_in_file(
+                                path.to_str().unwrap(),
+                                &strings_file_path,
+                            );
                             // TODO fix the unwrap here.
                         }
                     }
