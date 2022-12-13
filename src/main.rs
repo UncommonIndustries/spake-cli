@@ -167,9 +167,13 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
-
+                println!("{:?}", args.sourceCodeDirectory);
+                let source_directory = args.sourceCodeDirectory.clone().unwrap();
                 // 1) traverse the structure and find all the js or jsx files
-                for entry in WalkDir::new("src/").into_iter().filter_map(|e| e.ok()) {
+                for entry in WalkDir::new(source_directory)
+                    .into_iter()
+                    .filter_map(|e| e.ok())
+                {
                     let path = entry.path();
                     if path.is_file() {
                         let extension = path.extension();
@@ -177,7 +181,8 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             // 2) parse the files and find all the strings that are being passed to the translate function
-                            println!("{}", path.display());
+                            gather::extractor::replace_raw_strings_in_file(path.to_str().unwrap());
+                            // TODO fix the unwrap here.
                         }
                     }
                 }

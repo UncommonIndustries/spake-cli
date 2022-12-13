@@ -1,20 +1,22 @@
 use fancy_regex::Regex;
+use rand::{distributions::Alphanumeric, Rng};
 use std::collections::{HashMap, VecDeque};
+use std::fs; // 0.8
 
 use htmlstream;
 
-pub fn replace_raw_strings_in_file(src: &str) -> String {
-    let components = extract_components(src);
+pub fn replace_raw_strings_in_file(file_path: &str) -> String {
+    let file_data = fs::read_to_string(file_path).unwrap();
 
-    let mut new_src = src.clone().to_string();
+    let components = extract_components(&file_data);
+
+    let mut new_src = file_data.clone().to_string();
     let mut component_map: HashMap<String, String> = HashMap::new();
 
     for component in components {
-        println!("{:?}", component);
         let result = extract_returned_jsx_from_component(component);
 
         if let Some(return_expression) = result {
-            println!("jsx return is not none");
             // get just the JSX portion of the return expression
             let copy = return_expression.to_string().clone();
             let tree = build_parse_tree(copy);
@@ -23,23 +25,19 @@ pub fn replace_raw_strings_in_file(src: &str) -> String {
                 Vec::new();
 
             for (position, mut tag) in tree {
-                println!("{:?}", tag);
-
                 if tag.state == htmlstream::HTMLTagState::Text {
                     let cleaned_text = tag.html.trim();
                     if cleaned_text.starts_with("{") && cleaned_text.ends_with("}") {
-                        println!("found a bracketed thing, {:?}", cleaned_text);
                         new_component_tree.push((position, tag));
                         continue;
                     }
-                    let new_key = generate_synthetic_key_name("filename", cleaned_text);
+                    let new_key = generate_synthetic_key_name(file_path, cleaned_text);
 
                     // store the key and the old string in the file here
                     // add_key_to_strings_file(new_key, tag.html.clone())
 
                     // replace the string with the key in the tag element itself.✅
                     tag.html = create_evaluated_jsx_string(new_key);
-                    println!("altered format is {:?}", tag.html);
                 }
 
                 new_component_tree.push((position, tag));
@@ -140,8 +138,19 @@ fn build_parse_tree(src: String) -> VecDeque<(htmlstream::Position, htmlstream::
     return cleaned_data;
 }
 
-fn generate_synthetic_key_name(file_name: &str, text: &str) -> String {
-    return format!("{}_{}", &file_name[..3], "bob");
+fn generate_synthetic_key_name(file_path: &str, component: &str) -> String {
+    let random_data: String = rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(6)
+        .map(char::from)
+        .collect();
+    let component_name = get_component_name(component);
+    let file_name = file_path.split("/").last().unwrap();
+    return format!("{}_{}_{}_key", file_name, component_name, random_data);
+}
+fn get_component_name(component: &str) -> &str {
+    // TODO this should be a real function
+    return "hello world";
 }
 
 fn find_closure_end(src: &str, closure_start: usize) -> Option<usize> {
@@ -240,7 +249,7 @@ mod run_tests {
             "correctly identifies function component",
         );
         let mut returned_string = results[0].to_string();
-        println!("returned string: {}", returned_string);
+
         returned_string.retain(|c| !c.is_whitespace());
         let mut comparison = SINGLE_COMPONENT_TEST_FIXTURE.to_string();
         comparison.retain(|c| !c.is_whitespace());
