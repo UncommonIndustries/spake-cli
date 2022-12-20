@@ -29,7 +29,7 @@ pub fn replace_raw_strings_in_file(file_path: &str, strings_file_path: &str) -> 
             for (position, mut tag) in tree {
                 if tag.state == htmlstream::HTMLTagState::Text {
                     let cleaned_text = tag.html.trim();
-                    if cleaned_text.starts_with("{") && cleaned_text.ends_with("}") {
+                    if cleaned_text.starts_with("{") || cleaned_text.ends_with("}") {
                         new_component_tree.push((position, tag));
                         continue;
                     }
@@ -181,7 +181,7 @@ fn generate_synthetic_key_name(file_path: &str, component: &str) -> String {
 }
 fn get_component_name(component: &str) -> &str {
     // TODO this should be a real function
-    return "hello world";
+    return "hello_world";
 }
 
 fn find_closure_end(src: &str, closure_start: usize) -> Option<usize> {
