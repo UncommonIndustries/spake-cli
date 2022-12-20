@@ -1,7 +1,7 @@
 use fancy_regex::Regex;
 use rand::{distributions::Alphanumeric, Rng};
 use std::collections::{HashMap, VecDeque};
-use std::fs; // 0.8
+use std::fs;
 
 use htmlstream;
 
@@ -41,7 +41,6 @@ pub fn replace_raw_strings_in_file(file_path: &str, strings_file_path: &str) -> 
                     // replace the string with the key in the tag element itself.✅
                     tag.html = create_evaluated_jsx_string(new_key);
                 }
-
                 new_component_tree.push((position, tag));
             }
 
@@ -177,11 +176,14 @@ fn generate_synthetic_key_name(file_path: &str, component: &str) -> String {
         .collect();
     let component_name = get_component_name(component);
     let file_name = file_path.split("/").last().unwrap();
-    return format!("{}_{}_{}_key", file_name, component_name, random_data);
+    let split_filename: Vec<&str> = file_name.split(".").collect();
+    let filename = split_filename[0];
+
+    return format!("{}_{}_{}_key", filename, component_name, random_data);
 }
 fn get_component_name(component: &str) -> &str {
     // TODO this should be a real function
-    return "hello_world";
+    return "componentNameSlug";
 }
 
 fn find_closure_end(src: &str, closure_start: usize) -> Option<usize> {
