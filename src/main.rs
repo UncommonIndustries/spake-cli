@@ -7,7 +7,11 @@ use clap::{Args, Parser, Subcommand};
 
 use futures::{stream, StreamExt};
 
+use std::ffi::OsStr;
+use walkdir::WalkDir;
+
 mod file;
+mod gather;
 mod params;
 mod translate;
 
@@ -22,6 +26,30 @@ struct CLI {
 #[derive(Subcommand)]
 enum Commands {
     Translate(TranslateArgs),
+
+    #[command(subcommand)]
+    Beta(Beta),
+}
+
+#[derive(Subcommand)]
+enum Beta {
+    Gather(GatherArgs),
+    Init(InitArgs),
+}
+
+#[derive(Args)]
+struct GatherArgs {
+    #[arg(short, long, default_value = "src/strings/strings_en.json")]
+    path: Option<String>,
+
+    #[arg(short, long, default_value = "src/")]
+    sourceCodeDirectory: Option<String>,
+}
+
+#[derive(Args)]
+struct InitArgs {
+    #[arg(short, long, default_value = "src/strings/strings_en.json")]
+    base_path: Option<String>,
 }
 
 #[derive(Args)]
@@ -136,5 +164,44 @@ async fn main() {
                 Err(error) => println!("Error writing to file: {}", error),
             }
         }
+        Commands::Beta(beta) => match beta {
+            Beta::Gather(args) => {
+                // Gather should gather all the strings from the codebase and create a json file.
+
+                let source_directory = args.sourceCodeDirectory.clone().unwrap();
+                let strings_file_path = args.path.clone().unwrap();
+
+                // 1) traverse the structure and find all the js or jsx files
+                for entry in WalkDir::new(source_directory)
+                    .into_iter()
+                    .filter_map(|e| e.ok())
+                {
+                    let path = entry.path();
+                    if path.is_file() {
+                        let extension = path.extension();
+                        if extension == Some(OsStr::new("js"))
+                            || extension == Some(OsStr::new("jsx"))
+                        {
+                            // 2) parse the files and find all the strings that are being passed to the translate function
+                            gather::extractor::replace_raw_strings_in_file(
+                                path.to_str().unwrap(),
+                                &strings_file_path,
+                            );
+                            // TODO fix the unwrap here.
+                        }
+                    }
+                }
+
+                // 3) create a json file with the strings and the keys
+
+                println!("Gathering strings");
+            }
+            Beta::Init(args) => {
+                // Init should create the appropriate strings folder and the base json file.
+                // it should have an optional parameter for doing the gather step too.
+
+                println!("Not Implemented yet. Coming soon!");
+            }
+        },
     }
 }
