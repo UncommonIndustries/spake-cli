@@ -43,7 +43,7 @@ struct GatherArgs {
     path: Option<String>,
 
     #[arg(short, long, default_value = "src/")]
-    sourceCodeDirectory: Option<String>,
+    source_code_directory: Option<String>,
 }
 
 #[derive(Args)]
@@ -168,7 +168,7 @@ async fn main() {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
 
-                let source_directory = args.sourceCodeDirectory.clone().unwrap();
+                let source_directory = args.source_code_directory.clone().unwrap();
                 let strings_file_path = args.path.clone().unwrap();
 
                 // 1) traverse the structure and find all the js or jsx files
@@ -196,7 +196,7 @@ async fn main() {
 
                 println!("Gathering strings");
             }
-            Beta::Init(args) => {
+            Beta::Init(_) => {
                 // Init should create the appropriate strings folder and the base json file.
                 // it should have an optional parameter for doing the gather step too.
 
