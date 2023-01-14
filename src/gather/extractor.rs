@@ -135,7 +135,7 @@ fn extract_components(src: &str) -> Vec<&str> {
     let function_component_regex =
         Regex::new(r"function\s+([a-zA-Z0-9_]+)\s*\((props)?\)\s*{").unwrap();
     // return the component block
-    let mut functions: Vec<&str> = Vec::new();
+    let mut functional_components: Vec<&str> = Vec::new();
     for result in function_component_regex.find_iter(src) {
         match result {
             Ok(match_) => {
@@ -144,13 +144,14 @@ fn extract_components(src: &str) -> Vec<&str> {
 
                 if let Some(closure_end) = closure_end {
                     let function_data = &src[match_.start()..closure_end + 1];
-                    functions.append(&mut vec![function_data]);
+                    functional_components.append(&mut vec![function_data]);
                 }
+                println!("Found functional component, {:?}", match_)
             }
             Err(_) => panic!("Error with something"),
         }
     }
-    return functions;
+    return functional_components;
 }
 
 fn build_parse_tree(src: String) -> VecDeque<(htmlstream::Position, htmlstream::HTMLTag)> {

@@ -182,6 +182,7 @@ async fn main() {
                         if extension == Some(OsStr::new("js"))
                             || extension == Some(OsStr::new("jsx"))
                         {
+                            println!("Found File: {:?}", path.to_str());
                             // 2) parse the files and find all the strings that are being passed to the translate function
                             gather::extractor::replace_raw_strings_in_file(
                                 path.to_str().unwrap(),
