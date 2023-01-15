@@ -205,7 +205,7 @@ async fn main() {
                 let full_path = Path::new(args.base_path.as_ref().unwrap());
                 let strings_folder = full_path.parent();
                 let strings_folder_string: &str;
-
+                // create strings folder
                 match strings_folder {
                     Some(parent_path) => strings_folder_string = parent_path.to_str().unwrap(),
                     None => {
@@ -213,7 +213,8 @@ async fn main() {
                         return;
                     }
                 }
-                // start validate filename block
+
+                // validate file name
                 let file_name = full_path.file_name();
                 let file_name_string: &str;
                 match file_name {
@@ -223,7 +224,7 @@ async fn main() {
                         return;
                     }
                 }
-                //
+
                 let re = Regex::new(r"^strings_[A-Za-z]{2}\.json$").unwrap();
                 let matches = re.is_match(file_name_string);
                 match matches {
@@ -238,7 +239,6 @@ async fn main() {
                         return;
                     }
                 }
-                // end valdiate filename block
 
                 let _ = fs::create_dir_all(strings_folder_string);
                 let _ = fs::File::create(full_path);
