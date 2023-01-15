@@ -242,8 +242,6 @@ async fn main() {
 
                 let _ = fs::create_dir_all(strings_folder_string);
                 let _ = fs::File::create(full_path);
-
-                println!("if you're reading this i forgot to remove a debug statement");
             }
         },
     }
