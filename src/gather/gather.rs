@@ -1,7 +1,7 @@
 // gather.rs
 use base64::{engine::general_purpose, Engine};
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Serialize};
 use std::{error, fs};
 
 use url::Url;
@@ -18,7 +18,7 @@ pub async fn identify_strings_in_file(
     file_path: String,
     api_key: String,
     host: String,
-) -> Result<String, Box<dyn error::Error>> {
+) -> Result<Vec<GatherResponseObject>, Box<dyn error::Error>> {
     let client = Client::new();
     let fqdn = match build_api_endpoint(host) {
         Ok(fqdn) => fqdn,
@@ -47,8 +47,22 @@ pub async fn identify_strings_in_file(
         reqwest::StatusCode::BAD_REQUEST => return Err("bad request".into()),
         (_) => todo!(),
     }
+    let gather_response: Vec<GatherResponseObject> = match response.json().await {
+        Ok(response) => response,
+        Err(err) => {
+            println!("Error decoding json: {:?}", err);
+            return Err(err.into());
+        }
+    };
+    Ok(gather_response)
+}
 
-    Ok("hello".to_owned())
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct GatherResponseObject {
+    component_name: String,
+    file_name: String,
+    text: String,
+    line_number: Vec<i8>,
 }
 
 // todo create a stringsRequestStructure.
