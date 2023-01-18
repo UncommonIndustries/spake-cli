@@ -33,6 +33,12 @@ pub async fn identify_strings_in_file(
         Ok(res) => res,
         Err(err) => return Err(err.into()),
     };
+
+    match response.status() {
+        reqwest::StatusCode::OK => (),
+        _ => todo!(),
+    }
+
     Ok("hello".to_owned())
 }
 
@@ -55,8 +61,8 @@ fn build_gather_request_object(path: String) -> Result<GatherRequestObject, Box<
     };
 
     let object = GatherRequestObject {
-        file_text: "todo!()".to_string(),
-        file_path: get_base64_encoded_string(contents),
+        file_text: get_base64_encoded_string(contents),
+        file_path: path,
     };
     Ok(object)
 }
