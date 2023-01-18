@@ -206,7 +206,7 @@ async fn main() {
                             )
                             .await;
                             match result {
-                                Ok(_) => todo!(),
+                                Ok(res) => println!("Result worked I think? {:?}", res),
                                 Err(err) => println!("Error doing something: {:?}", err),
                             }
                         }

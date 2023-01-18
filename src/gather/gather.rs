@@ -44,9 +44,10 @@ pub async fn identify_strings_in_file(
 
     match response.status() {
         reqwest::StatusCode::OK => (),
-        _ => todo!(),
+        reqwest::StatusCode::BAD_REQUEST => return Err("bad request".into()),
+        (_) => todo!(),
     }
-    println!("{:?}", response);
+
     Ok("hello".to_owned())
 }
 
