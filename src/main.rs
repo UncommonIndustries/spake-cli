@@ -43,6 +43,9 @@ struct GatherArgs {
     #[arg(short, long, default_value = "src/strings/strings_en.json")]
     path: Option<String>,
 
+    #[arg(short, long, env = "SPAKE_API_KEY")]
+    api_key: String,
+
     #[arg(short, long, default_value = "src/")]
     source_code_directory: Option<String>,
 }
@@ -168,7 +171,7 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
-
+                let api_key = &args.api_key.clone();
                 let source_directory = args.source_code_directory.clone().unwrap();
                 let strings_file_path = args.path.clone().unwrap();
 
@@ -185,11 +188,7 @@ async fn main() {
                         {
                             println!("Found File: {:?}", path.to_str());
                             // 2) parse the files and find all the strings that are being passed to the translate function
-                            gather::extractor::replace_raw_strings_in_file(
-                                path.to_str().unwrap(),
-                                &strings_file_path,
-                            );
-                            // TODO fix the unwrap here.
+                            // pass each file path to a function that reads the file, base64 encodes and ships to the endpoint based on the API key.
                         }
                     }
                 }
