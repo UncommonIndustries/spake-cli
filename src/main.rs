@@ -68,10 +68,10 @@ struct TranslateArgs {
     api_key: String,
 
     #[arg(short, long, default_value = "es")]
-    target_language: Option<translate::models::ValidTargetLanguages>,
+    target_language: translate::models::ValidTargetLanguages,
 
     #[arg(short, long, default_value = "en")]
-    source_language: Option<translate::models::ValidSourceLanguages>,
+    source_language: translate::models::ValidSourceLanguages,
 
     #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
     host: Option<String>,
@@ -89,11 +89,10 @@ async fn main() {
                 return;
             }
 
-            let target_language_argument = args.target_language.as_ref().unwrap();
-            let target_file_path = format!("strings/strings_{:#?}.json", target_language_argument);
+            let target_language = args.target_language;
+            let source_language = args.source_language;
 
-            let target_language = target_language_argument;
-            let source_language = args.source_language.as_ref().unwrap();
+            let target_file_path = format!("strings/strings_{:#?}.json", target_language);
 
             let api_key = &args.api_key;
 
@@ -119,8 +118,8 @@ async fn main() {
                         let translation_request =
                             translate::translation_request::TranslationRequest {
                                 text: value.string.clone(),
-                                from_language: *source_language,
-                                to_language: *target_language,
+                                from_language: source_language,
+                                to_language: target_language,
                             };
 
                         let translation = translate::translate::translate_string(
