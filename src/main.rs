@@ -187,15 +187,17 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             println!("Found File: {:?}", path.to_str());
-                            // 2) parse the files and find all the strings that are being passed to the translate function
-                            // pass each file path to a function that reads the file, base64 encodes and ships to the endpoint based on the API key.
+
+                            // pass each filepath and api_key to a function that reads the file,
+                            // base64 encodes the filedata and ships to the endpoint.
+                            // get back some value per file that we do something with, such as writing to a report file.
                         }
                     }
                 }
 
                 // 3) create a json file with the strings and the keys
 
-                println!("Gathering strings");
+                println!("Gather report summary.");
             }
             Beta::Init(args) => {
                 // Init should create the appropriate strings folder and the base json file.
