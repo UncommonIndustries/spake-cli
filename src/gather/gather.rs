@@ -62,7 +62,7 @@ pub struct GatherResponseObject {
     component_name: String,
     file_name: String,
     text: String,
-    line_number: Vec<i8>,
+    line_number: Option<Vec<i8>>,
 }
 
 // todo create a stringsRequestStructure.
