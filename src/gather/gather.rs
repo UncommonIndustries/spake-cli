@@ -38,7 +38,7 @@ pub async fn identify_strings_in_file(
         reqwest::StatusCode::OK => (),
         _ => todo!(),
     }
-
+    println!("{:?}", response);
     Ok("hello".to_owned())
 }
 

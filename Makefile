@@ -10,6 +10,7 @@ test: build
 	#./target/debug/$(NAME) translate --host http://localhost:8000 --path ./tests/long/strings_en.json -t fr -s en
 	#./target/debug/$(NAME) translate --host http://localhost:8000 --path ./strings/strings_fr.json -t it -s fr
 
+
 clean: 
 	cargo clean
 	-rm -rf dist/

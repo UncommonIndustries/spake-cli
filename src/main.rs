@@ -174,9 +174,10 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
-                let api_key = &args.api_key.clone();
+                let api_key = args.api_key.clone();
+                let host = args.host.clone().unwrap();
                 let source_directory = args.source_code_directory.clone().unwrap();
-                let strings_file_path = args.path.clone().unwrap();
+                let _strings_file_path = args.path.clone().unwrap();
 
                 // 1) traverse the structure and find all the js or jsx files
                 for entry in WalkDir::new(source_directory)
@@ -190,7 +191,6 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             println!("Found File: {:?}", path.to_str());
-
                             // pass each filepath and api_key to a function that reads the file,
                             // base64 encodes the filedata and ships to the endpoint.
                             // get back some value per file that we do something with, such as writing to a report file.
@@ -198,6 +198,17 @@ async fn main() {
                             // Append to a list for summarization etc.
                             // the fastest solution to get moving is to append to a list for summzarization,
                             // and outside the loop create a summary + write to disk.
+                            let file_path = path.to_str().unwrap().to_string();
+                            let result = gather::gather::identify_strings_in_file(
+                                file_path,
+                                api_key.clone(),
+                                host.clone(),
+                            )
+                            .await;
+                            match result {
+                                Ok(_) => todo!(),
+                                Err(err) => println!("Error doing something: {:?}", err),
+                            }
                         }
                     }
                 }
