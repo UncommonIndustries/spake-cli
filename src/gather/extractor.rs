@@ -56,7 +56,7 @@ pub fn replace_raw_strings_in_file(file_path: &str, strings_file_path: &str) -> 
     for (k, v) in component_map.iter() {
         new_src = new_src.replace(k, v);
     }
-    fs::write(file_path, new_src);
+    let _ = fs::write(file_path, new_src);
     // rebuild the file from the components.
     return "new_src".to_string();
 }
@@ -66,7 +66,7 @@ fn add_key_to_strings_file(new_key: String, text_data: String, strings_file_path
     let mut keys = match keys {
         Ok(k) => k,
         Err(_) => {
-            println!("There was anerror reading in the keys file");
+            println!("There was an error reading in the keys file");
             return;
         }
     };
@@ -87,7 +87,7 @@ fn add_key_to_strings_file(new_key: String, text_data: String, strings_file_path
             return;
         }
     };
-    fs::write(strings_file_path, json);
+    let _ = fs::write(strings_file_path, json);
 }
 
 fn position_tag_iterator_to_string(
@@ -217,8 +217,8 @@ fn extract_returned_jsx_from_component(component: &str) -> Option<&str> {
                 return Some(capture.get(0).unwrap().as_str());
             }
         }
-        Err(_) => {
-            panic!("error)")
+        Err(err) => {
+            panic!("error, {:?}, {:?}", err, component)
         }
     }
     None

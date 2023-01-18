@@ -7,6 +7,7 @@ use clap::{Args, Parser, Subcommand};
 
 use futures::{stream, StreamExt};
 
+use fancy_regex::Regex;
 use std::ffi::OsStr;
 use walkdir::WalkDir;
 
@@ -197,11 +198,50 @@ async fn main() {
 
                 println!("Gathering strings");
             }
-            Beta::Init(_) => {
+            Beta::Init(args) => {
                 // Init should create the appropriate strings folder and the base json file.
                 // it should have an optional parameter for doing the gather step too.
 
-                println!("Not Implemented yet. Coming soon!");
+                let full_path = Path::new(args.base_path.as_ref().unwrap());
+                let strings_folder = full_path.parent();
+                let strings_folder_string: &str;
+                // create strings folder
+                match strings_folder {
+                    Some(parent_path) => strings_folder_string = parent_path.to_str().unwrap(),
+                    None => {
+                        println!("Error creating strings folder. Folder name is Bogus.");
+                        return;
+                    }
+                }
+
+                // validate file name
+                let file_name = full_path.file_name();
+                let file_name_string: &str;
+                match file_name {
+                    Some(file_name) => file_name_string = file_name.to_str().unwrap(),
+                    None => {
+                        println!("Error validating string name. FileName is bogus.");
+                        return;
+                    }
+                }
+
+                let re = Regex::new(r"^strings_[A-Za-z]{2}\.json$").unwrap();
+                let matches = re.is_match(file_name_string);
+                match matches {
+                    Ok(is_valid) => {
+                        if !is_valid {
+                            println!("Error validating target strings name, {:?} does not conform to standard strings file format.", file_name_string);
+                            return;
+                        }
+                    }
+                    Err(_) => {
+                        println!("Error validating strings name. Input is so garbage it breaks the regex module somehow.");
+                        return;
+                    }
+                }
+
+                let _ = fs::create_dir_all(strings_folder_string);
+                let _ = fs::File::create(full_path);
             }
         },
     }
