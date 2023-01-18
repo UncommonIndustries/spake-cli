@@ -221,8 +221,19 @@ async fn main() {
                 }
 
                 // 3) create a json file with the strings and the keys
+                let json_data_to_write = match serde_json::to_string_pretty(&string_literals) {
+                    Ok(json) => json,
+                    Err(error) => {
+                        println!("Error writing result to file");
+                        return;
+                    }
+                };
 
-                println!("Gather report summary.");
+                let target_file = "./src/strings/gather_results.json".to_string();
+                match fs::write(target_file, json_data_to_write) {
+                    Ok(_) => println!("Successfully wrote to file"),
+                    Err(error) => println!("error writing to file: {}", error),
+                }
             }
             Beta::Init(args) => {
                 // Init should create the appropriate strings folder and the base json file.
