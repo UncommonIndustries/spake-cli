@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64 = "0.21.0"
 clap = { version = "4.0.18", features = ["derive", "env"] }
 fancy-regex = "0.10.0"
 futures = "0.3.25"
