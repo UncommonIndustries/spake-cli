@@ -180,6 +180,8 @@ async fn main() {
                 let _strings_file_path = args.path.clone().unwrap();
 
                 // 1) traverse the structure and find all the js or jsx files
+                let mut string_literals: Vec<gather::gather::GatherResponseObject> = Vec::new();
+
                 for entry in WalkDir::new(source_directory)
                     .into_iter()
                     .filter_map(|e| e.ok())
@@ -199,16 +201,21 @@ async fn main() {
                             // the fastest solution to get moving is to append to a list for summzarization,
                             // and outside the loop create a summary + write to disk.
                             let file_path = path.to_str().unwrap().to_string();
-                            let result = gather::gather::identify_strings_in_file(
+                            let mut result = match gather::gather::identify_strings_in_file(
                                 file_path,
                                 api_key.clone(),
                                 host.clone(),
                             )
-                            .await;
-                            match result {
-                                Ok(res) => println!("Result worked I think? {:?}", res),
-                                Err(err) => println!("Error doing something: {:?}", err),
-                            }
+                            .await
+                            {
+                                Ok(res) => res,
+                                Err(err) => {
+                                    println!("Error doing something: {:?}", err);
+                                    continue;
+                                }
+                            };
+                            string_literals.append(&mut result);
+                            println!("{:?}", string_literals.len())
                         }
                     }
                 }
