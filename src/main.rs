@@ -191,6 +191,10 @@ async fn main() {
                             // pass each filepath and api_key to a function that reads the file,
                             // base64 encodes the filedata and ships to the endpoint.
                             // get back some value per file that we do something with, such as writing to a report file.
+                            // let response_from_api = myFunctionCallCode(path)
+                            // Append to a list for summarization etc.
+                            // the fastest solution to get moving is to append to a list for summzarization,
+                            // and outside the loop create a summary + write to disk.
                         }
                     }
                 }
