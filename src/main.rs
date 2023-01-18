@@ -193,13 +193,6 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             println!("Found File: {:?}", path.to_str());
-                            // pass each filepath and api_key to a function that reads the file,
-                            // base64 encodes the filedata and ships to the endpoint.
-                            // get back some value per file that we do something with, such as writing to a report file.
-                            // let response_from_api = myFunctionCallCode(path)
-                            // Append to a list for summarization etc.
-                            // the fastest solution to get moving is to append to a list for summzarization,
-                            // and outside the loop create a summary + write to disk.
                             let file_path = path.to_str().unwrap().to_string();
                             let mut result = match gather::gather::identify_strings_in_file(
                                 file_path,
