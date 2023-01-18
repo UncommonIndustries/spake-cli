@@ -46,6 +46,9 @@ struct GatherArgs {
     #[arg(short, long, env = "SPAKE_API_KEY")]
     api_key: String,
 
+    #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
+    host: Option<String>,
+
     #[arg(short, long, default_value = "src/")]
     source_code_directory: Option<String>,
 }
