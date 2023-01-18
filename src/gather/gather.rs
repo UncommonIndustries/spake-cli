@@ -4,7 +4,15 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::{error, fs};
 
-use crate::translate::translate;
+use url::Url;
+
+const GATHER_API_ENDPOINT: &str = "api/v1/gather";
+
+fn build_api_endpoint(host: String) -> Result<Url, Box<dyn error::Error>> {
+    let base = Url::parse(&host)?;
+    let joined = base.join(GATHER_API_ENDPOINT)?;
+    Ok(joined)
+}
 
 pub async fn identify_strings_in_file(
     file_path: String,
@@ -12,7 +20,7 @@ pub async fn identify_strings_in_file(
     host: String,
 ) -> Result<String, Box<dyn error::Error>> {
     let client = Client::new();
-    let fqdn = match translate::build_api_endpoint(host) {
+    let fqdn = match build_api_endpoint(host) {
         Ok(fqdn) => fqdn,
         Err(err) => {
             println!(
