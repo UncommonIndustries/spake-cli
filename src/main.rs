@@ -43,6 +43,12 @@ struct GatherArgs {
     #[arg(short, long, default_value = "src/strings/strings_en.json")]
     path: Option<String>,
 
+    #[arg(short, long, env = "SPAKE_API_KEY")]
+    api_key: String,
+
+    #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
+    host: Option<String>,
+
     #[arg(short, long, default_value = "src/")]
     source_code_directory: Option<String>,
 }
@@ -168,11 +174,14 @@ async fn main() {
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
                 // Gather should gather all the strings from the codebase and create a json file.
-
+                let api_key = args.api_key.clone();
+                let host = args.host.clone().unwrap();
                 let source_directory = args.source_code_directory.clone().unwrap();
-                let strings_file_path = args.path.clone().unwrap();
+                let _strings_file_path = args.path.clone().unwrap();
 
                 // 1) traverse the structure and find all the js or jsx files
+                let mut string_literals: Vec<gather::gather::GatherResponseObject> = Vec::new();
+
                 for entry in WalkDir::new(source_directory)
                     .into_iter()
                     .filter_map(|e| e.ok())
@@ -184,19 +193,40 @@ async fn main() {
                             || extension == Some(OsStr::new("jsx"))
                         {
                             println!("Found File: {:?}", path.to_str());
-                            // 2) parse the files and find all the strings that are being passed to the translate function
-                            gather::extractor::replace_raw_strings_in_file(
-                                path.to_str().unwrap(),
-                                &strings_file_path,
-                            );
-                            // TODO fix the unwrap here.
+                            let file_path = path.to_str().unwrap().to_string();
+                            let mut result = match gather::gather::identify_strings_in_file(
+                                file_path,
+                                api_key.clone(),
+                                host.clone(),
+                            )
+                            .await
+                            {
+                                Ok(res) => res,
+                                Err(err) => {
+                                    println!("Error doing something: {:?}", err);
+                                    continue;
+                                }
+                            };
+                            string_literals.append(&mut result);
+                            println!("{:?}", string_literals.len())
                         }
                     }
                 }
 
                 // 3) create a json file with the strings and the keys
+                let json_data_to_write = match serde_json::to_string_pretty(&string_literals) {
+                    Ok(json) => json,
+                    Err(error) => {
+                        println!("Error writing result to file");
+                        return;
+                    }
+                };
 
-                println!("Gathering strings");
+                let target_file = "./src/strings/gather_results.json".to_string();
+                match fs::write(target_file, json_data_to_write) {
+                    Ok(_) => println!("Successfully wrote to file"),
+                    Err(error) => println!("error writing to file: {}", error),
+                }
             }
             Beta::Init(args) => {
                 // Init should create the appropriate strings folder and the base json file.
