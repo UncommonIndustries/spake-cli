@@ -155,6 +155,12 @@ async fn main() {
                 )
                 .await;
 
+            // TODO: make this check more informative by factoring out into a helper and
+            // printing which keys are missing or extraneous
+            if !q.keys().eq(to_translate.keys()) {
+                println!("Key mismatch between translation source and target")
+            }
+
             let target_file = target_file_path.to_string();
             let json = match serde_json::to_string_pretty(&q) {
                 Ok(json) => json,
