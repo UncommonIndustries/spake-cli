@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 
 use std::path::Path;
@@ -68,10 +68,10 @@ struct TranslateArgs {
     api_key: String,
 
     #[arg(short, long, default_value = "es")]
-    target_language: Option<translate::models::ValidTargetLanguages>,
+    target_language: translate::models::ValidTargetLanguages,
 
     #[arg(short, long, default_value = "en")]
-    source_language: Option<translate::models::ValidSourceLanguages>,
+    source_language: translate::models::ValidSourceLanguages,
 
     #[arg(long, default_value=params::PRODUCTION_ENDPOINT)]
     host: Option<String>,
@@ -89,15 +89,14 @@ async fn main() {
                 return;
             }
 
-            let target_language_argument = args.target_language.as_ref().unwrap();
-            let target_file_path = format!("strings/strings_{:#?}.json", target_language_argument);
+            let target_language = args.target_language;
+            let source_language = args.source_language;
 
-            let target_language = target_language_argument;
-            let source_language = args.source_language.as_ref().unwrap();
+            let target_file_path = format!("strings/strings_{:#?}.json", target_language);
 
             let api_key = &args.api_key;
 
-            let source_json = match file::get_json(source_path.to_string()) {
+            let source_json = match file::from_json(source_path.to_string()) {
                 Ok(json) => json,
                 Err(error) => {
                     println!("Error reading json file: {}", error);
@@ -107,6 +106,9 @@ async fn main() {
             // kind of a weird hack to do this;; we can preemptively identify which keys we should skip and skip them here.
             let mut destination_hash_map: HashMap<String, file::Key> = source_json.clone();
             let mut to_translate: HashMap<String, file::Key> = source_json.clone();
+
+            // This needs to be here because translation_result moves the value, after which we cannot borrow
+            let src_keys: HashSet<String> = to_translate.keys().cloned().collect();
 
             destination_hash_map.retain(|_, v| v.translate == Some(false));
             to_translate.retain(|_, v| v.translate == None || v.translate == Some(true));
@@ -119,8 +121,8 @@ async fn main() {
                         let translation_request =
                             translate::translation_request::TranslationRequest {
                                 text: value.string.clone(),
-                                from_language: *source_language,
-                                to_language: *target_language,
+                                from_language: source_language,
+                                to_language: target_language,
                             };
 
                         let translation = translate::translate::translate_string(
@@ -155,6 +157,24 @@ async fn main() {
                     },
                 )
                 .await;
+
+            // Check that the keys match between source and dest, and if they don't, print out the extras
+            let tgt_keys: HashSet<String> = q.keys().cloned().collect();
+
+            if !src_keys.eq(&tgt_keys) {
+                println!("Key mismatch between translation source and target");
+
+                let src_diff = src_keys.difference(&tgt_keys);
+                let tgt_diff = tgt_keys.difference(&src_keys);
+
+                if src_diff.clone().count() > 0 {
+                    println!("Extra keys in source: {:?}", src_diff);
+                }
+
+                if tgt_diff.clone().count() > 0 {
+                    println!("Extra keys in target: {:?}", tgt_diff);
+                }
+            }
 
             let target_file = target_file_path.to_string();
             let json = match serde_json::to_string_pretty(&q) {

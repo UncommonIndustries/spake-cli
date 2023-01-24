@@ -1,7 +1,7 @@
 // gather.rs
 use base64::{engine::general_purpose, Engine};
 use reqwest::Client;
-use serde::{de, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::{error, fs};
 
 use url::Url;

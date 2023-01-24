@@ -15,7 +15,7 @@ pub struct Key {
     pub translate: Option<bool>, // whether or not the string should be translated
 }
 
-pub fn get_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
+pub fn from_json(filepath: String) -> Result<HashMap<String, Key>, Error> {
     let mut file = File::open(filepath)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
@@ -28,13 +28,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_json() {
-        let json = get_json("./tests/test.json".to_string()).unwrap();
+    fn test_from_json() {
+        let json = from_json("./tests/test.json".to_string()).unwrap();
         assert_eq!(json["test_key"].string, "test_value");
     }
     #[test]
     fn test_to_be_skipped() {
-        let json = get_json("./tests/test.json".to_string()).unwrap();
+        let json = from_json("./tests/test.json".to_string()).unwrap();
 
         assert_eq!(json["ToBeSkipped"].translate, Some(false));
     }
