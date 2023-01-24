@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 
 use std::path::Path;
@@ -96,7 +96,7 @@ async fn main() {
 
             let api_key = &args.api_key;
 
-            let source_json = match file::get_json(source_path.to_string()) {
+            let source_json = match file::from_json(source_path.to_string()) {
                 Ok(json) => json,
                 Err(error) => {
                     println!("Error reading json file: {}", error);
@@ -106,6 +106,9 @@ async fn main() {
             // kind of a weird hack to do this;; we can preemptively identify which keys we should skip and skip them here.
             let mut destination_hash_map: HashMap<String, file::Key> = source_json.clone();
             let mut to_translate: HashMap<String, file::Key> = source_json.clone();
+
+            // This needs to be here because translation_result moves the value, after which we cannot borrow
+            let src_keys: HashSet<String> = to_translate.keys().cloned().collect();
 
             destination_hash_map.retain(|_, v| v.translate == Some(false));
             to_translate.retain(|_, v| v.translate == None || v.translate == Some(true));
@@ -155,10 +158,15 @@ async fn main() {
                 )
                 .await;
 
-            // TODO: make this check more informative by factoring out into a helper and
-            // printing which keys are missing or extraneous
-            if !q.keys().eq(to_translate.keys()) {
-                println!("Key mismatch between translation source and target")
+            // Check that the keys match between source and dest, and if they don't, print out the extras
+            let tgt_keys: HashSet<String> = q.keys().cloned().collect();
+
+            if !src_keys.eq(&tgt_keys) {
+                println!("Key mismatch between translation source and target");
+                let src_diff = src_keys.difference(&tgt_keys);
+                let tgt_diff = tgt_keys.difference(&src_keys);
+                println!("Mismatched keys in source: {:?}", src_diff);
+                println!("Mismatched keys in target: {:?}", tgt_diff);
             }
 
             let target_file = target_file_path.to_string();
