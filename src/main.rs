@@ -163,10 +163,17 @@ async fn main() {
 
             if !src_keys.eq(&tgt_keys) {
                 println!("Key mismatch between translation source and target");
+
                 let src_diff = src_keys.difference(&tgt_keys);
                 let tgt_diff = tgt_keys.difference(&src_keys);
-                println!("Mismatched keys in source: {:?}", src_diff);
-                println!("Mismatched keys in target: {:?}", tgt_diff);
+
+                if src_diff.clone().count() > 0 {
+                    println!("Extra keys in source: {:?}", src_diff);
+                }
+
+                if tgt_diff.clone().count() > 0 {
+                    println!("Extra keys in target: {:?}", tgt_diff);
+                }
             }
 
             let target_file = target_file_path.to_string();
