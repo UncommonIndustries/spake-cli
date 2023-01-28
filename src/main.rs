@@ -97,7 +97,7 @@ async fn main() {
             let parent_dir = source_filepath.parent().unwrap();
 
             let target_filename = format!("strings_{:#?}.json", target_language);
-            let target_filepath = parent_dir.join("/").join(target_filename);
+            let target_filepath = parent_dir.join(target_filename);
 
             let api_key = &args.api_key;
 
@@ -189,10 +189,12 @@ async fn main() {
                 }
             };
 
+            // println!("{:?} {}", target_filepath, file_path);
+
             let success = fs::write(target_filepath, json);
             match success {
                 Ok(_) => println!("Successfully wrote to file"),
-                Err(error) => println!("Error writing to file: {}", error),
+                Err(error) => println!("Error writing to file: {},  ", error),
             }
         }
         Commands::Beta(beta) => match beta {
