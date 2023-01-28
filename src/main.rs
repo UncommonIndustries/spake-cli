@@ -83,20 +83,25 @@ async fn main() {
 
     match &cli.command {
         Commands::Translate(args) => {
-            let source_path = args.path.as_ref().unwrap();
-            if !(Path::new(&source_path).exists()) {
+            let source_filepath_str = args.path.as_ref().unwrap();
+            let source_filepath = Path::new(&source_filepath_str);
+
+            if !source_filepath.exists() {
                 println!("Provided filepath does not exist");
                 return;
-            }
+            };
 
             let target_language = args.target_language;
             let source_language = args.source_language;
 
-            let target_file_path = format!("strings/strings_{:#?}.json", target_language);
+            let parent_dir = source_filepath.parent().unwrap();
+
+            let target_filename = format!("strings_{:#?}.json", target_language);
+            let target_filepath = parent_dir.join(target_filename);
 
             let api_key = &args.api_key;
 
-            let source_json = match file::from_json(source_path.to_string()) {
+            let source_json = match file::from_json(source_filepath_str.to_string()) {
                 Ok(json) => json,
                 Err(error) => {
                     println!("Error reading json file: {}", error);
@@ -176,7 +181,6 @@ async fn main() {
                 }
             }
 
-            let target_file = target_file_path.to_string();
             let json = match serde_json::to_string_pretty(&q) {
                 Ok(json) => json,
                 Err(error) => {
@@ -185,10 +189,10 @@ async fn main() {
                 }
             };
 
-            let success = fs::write(target_file, json);
+            let success = fs::write(target_filepath, json);
             match success {
                 Ok(_) => println!("Successfully wrote to file"),
-                Err(error) => println!("Error writing to file: {}", error),
+                Err(error) => println!("Error writing to file: {}, ", error),
             }
         }
         Commands::Beta(beta) => match beta {
