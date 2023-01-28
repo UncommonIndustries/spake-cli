@@ -189,12 +189,10 @@ async fn main() {
                 }
             };
 
-            // println!("{:?} {}", target_filepath, file_path);
-
             let success = fs::write(target_filepath, json);
             match success {
                 Ok(_) => println!("Successfully wrote to file"),
-                Err(error) => println!("Error writing to file: {},  ", error),
+                Err(error) => println!("Error writing to file: {}, ", error),
             }
         }
         Commands::Beta(beta) => match beta {
