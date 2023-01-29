@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
+use std::io::Write;
 use std::path::Path;
 
 use clap::{Args, Parser, Subcommand};
@@ -295,7 +296,23 @@ async fn main() {
                 }
 
                 let _ = fs::create_dir_all(strings_folder_string);
-                let _ = fs::File::create(full_path);
+                let mut file = match fs::File::create(full_path) {
+                    Ok(file) => file,
+                    Err(err) => {
+                        println!("Error creating spake-language file");
+                        return;
+                    }
+                };
+                let default_file_data = b"{}";
+                match file.write_all(default_file_data) {
+                    Ok(_) => {
+                        println!("Spake initialized")
+                    }
+                    Err(_) => {
+                        println!("Error initializing spake file, ");
+                        return;
+                    }
+                }
             }
         },
     }
