@@ -140,7 +140,7 @@ async fn main() {
                         (key, translation)
                     }
                 })
-                .buffer_unordered(9);
+                .buffer_unordered(1);
 
             let q = translation_result
                 .fold(
