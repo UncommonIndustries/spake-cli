@@ -235,7 +235,7 @@ async fn main() {
                                     continue;
                                 }
                             };
-                            string_literals.append(&mut result);
+                            string_literals.push(result);
                             println!("{:?}", string_literals.len())
                         }
                     }
