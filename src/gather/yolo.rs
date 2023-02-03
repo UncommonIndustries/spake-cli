@@ -3,6 +3,7 @@ use std::fs;
 use super::gather::GatherResponseObject;
 use base64::{engine::general_purpose, Engine as _};
 
+use crate::file;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
@@ -16,11 +17,12 @@ pub fn yolo_strings_into_files<'a>(gather_result: Vec<GatherResponseObject>) {
         for component in file.components {
             // replace inline strings with keys. hopefully.
             for string_literal in component.literals {
-                let new_line = get_new_line(
+                let key_name = get_key_name(
                     file_name.clone(),
                     component.name.clone(),
                     string_literal.text.clone(),
                 );
+                let new_line = format!("{{ strings.{} }}", key_name);
                 if string_literal.lineNumber.len() > 1 {
                     continue;
                 }
@@ -34,6 +36,33 @@ pub fn yolo_strings_into_files<'a>(gather_result: Vec<GatherResponseObject>) {
                 let padded_new_line = left_string + &new_line;
 
                 file_data[line_number] = padded_new_line;
+                let strings_file_data =
+                    file::from_json("./src/strings/strings_en.json".to_string()).unwrap();
+                if strings_file_data.contains_key(key_name.as_str()) {
+                    continue;
+                }
+                let new_key = file::Key {
+                    string: string_literal.text.trim().to_string(),
+                    example_keys: None,
+                    translate: None,
+                };
+                let mut new_strings_file_data = strings_file_data;
+                new_strings_file_data.insert(key_name, new_key);
+                let json = match serde_json::to_string_pretty(&new_strings_file_data) {
+                    Ok(json) => json,
+                    Err(error) => {
+                        println!("Error converting json to string: {}", error);
+                        return;
+                    }
+                };
+                let r = fs::write("./src/strings/strings_en.json".to_string(), json);
+                match r {
+                    Ok(_) => {}
+                    Err(error) => {
+                        println!("Error writing to file during yolo: {}", error);
+                        return;
+                    }
+                }
             }
             // add use of strings package to each component
             let use_line = "  const { strings } = useSpakeState();";
@@ -51,12 +80,6 @@ pub fn yolo_strings_into_files<'a>(gather_result: Vec<GatherResponseObject>) {
         let file_data = file_data.join("\n");
         fs::write(file_name, file_data).unwrap();
     }
-}
-
-fn get_new_line(file_name: String, component_name: String, text: String) -> String {
-    let key_name = get_key_name(file_name, component_name, text);
-    let new_line = format!("{{ strings.{} }}", key_name);
-    new_line
 }
 
 fn get_key_name(file_name: String, component_name: String, text: String) -> String {
