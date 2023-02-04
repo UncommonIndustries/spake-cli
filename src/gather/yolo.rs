@@ -72,6 +72,9 @@ pub fn yolo_strings_into_files<'a>(gather_result: Vec<GatherResponseObject>) {
             component_line_offset += 1;
         }
         if file_components_len > 0 {
+            if file_data[0].contains("useSpakeState") {
+                continue;
+            }
             file_data.insert(
                 0,
                 "import { useSpakeState } from 'spake-react-sdk';".to_string(),
