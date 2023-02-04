@@ -1,9 +1,8 @@
 use std::fs;
 
 use super::gather::GatherResponseObject;
-use base64::{engine::general_purpose, Engine as _};
-
 use crate::file;
+use data_encoding::BASE32HEX_NOPAD;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
@@ -95,7 +94,7 @@ fn get_key_name(file_name: String, component_name: String, text: String) -> Stri
 
     let text = text.as_bytes();
     let hashed_text = hash(&text);
-    let encoded = general_purpose::URL_SAFE_NO_PAD.encode(&hashed_text.to_be_bytes());
+    let encoded = BASE32HEX_NOPAD.encode(&hashed_text.to_be_bytes());
 
     let key_name = format!("{}_{}_{}", file_name, component_name, encoded);
     key_name
