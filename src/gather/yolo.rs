@@ -41,8 +41,10 @@ pub fn yolo_strings_into_files<'a>(gather_result: Vec<GatherResponseObject>) {
                 if strings_file_data.contains_key(key_name.as_str()) {
                     continue;
                 }
+                let cleaned_string = string_literal.text.trim().replace("\"", "\\\"");
+                println!("{}: {}", key_name, cleaned_string);
                 let new_key = file::Key {
-                    string: string_literal.text.trim().to_string(),
+                    string: cleaned_string,
                     example_keys: None,
                     translate: None,
                 };
