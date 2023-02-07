@@ -39,7 +39,7 @@ enum Beta {
     Init(InitArgs),
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 struct GatherArgs {
     #[arg(short, long, default_value = "src/strings/strings_en.json")]
     path: Option<String>,
@@ -52,6 +52,9 @@ struct GatherArgs {
 
     #[arg(short, long, default_value = "src/")]
     source_code_directory: Option<String>,
+
+    #[arg(short, long)]
+    yolo: bool,
 }
 
 #[derive(Args)]
@@ -232,10 +235,17 @@ async fn main() {
                                     continue;
                                 }
                             };
-                            string_literals.append(&mut result);
+                            string_literals.push(result);
                             println!("{:?}", string_literals.len())
                         }
                     }
+                }
+                let yolo = args.yolo;
+
+                if yolo {
+                    println!("Yolo lets go!");
+                    gather::yolo::yolo_strings_into_files(string_literals);
+                    return;
                 }
 
                 // 3) create a json file with the strings and the keys
