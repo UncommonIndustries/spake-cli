@@ -79,8 +79,8 @@ struct TranslateArgs {
     host: Option<String>,
 }
 
-const CUTOFF_HIGH: u32 = 0.6;
-const CUTOFF_MID: u32 = 0.4;
+const CUTOFF_HIGH: f64 = 0.6;
+const CUTOFF_MID: f64 = 0.4;
 
 #[tokio::main]
 async fn main() {
