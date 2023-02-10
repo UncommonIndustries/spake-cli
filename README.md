@@ -14,6 +14,15 @@ The CLI is run with ```spake-cli```
 
 run ```spake-cli --help``` for more information
 
+#### Running Tests
+```
+# Add the following to your shell config:
+export SPAKE_API_KEY="wp22X8k4qck.r3GERB0c3P5Yr34FjLDHvcm3OHgne0eM" # referenced from uncommonSpake-Backend repo README
+# Now spin up the test DB in uncommonSpake-Backend
+make dev
+# Now run this command in the spake-cli repo
+make test
+```
 
 ## Contributing
 The code is extremely simple at the moment. If you want to contribute, please open an issue or a PR.
