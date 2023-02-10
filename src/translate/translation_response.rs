@@ -4,4 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct TranslationResponse {
     // The translated text.
     pub text: String,
+    pub quality_score: f64,
 }

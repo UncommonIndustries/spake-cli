@@ -4,6 +4,7 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 
+use colored::*;
 use clap::{Args, Parser, Subcommand};
 
 use futures::{stream, StreamExt};
@@ -78,6 +79,9 @@ struct TranslateArgs {
     host: Option<String>,
 }
 
+const CUTOFF_HIGH: f64 = 0.6;
+const CUTOFF_MID: f64 = 0.4;
+
 #[tokio::main]
 async fn main() {
     let cli = CLI::parse();
@@ -142,24 +146,37 @@ async fn main() {
                 })
                 .buffer_unordered(1);
 
-            let q = translation_result
+            // Take each key-value pair from translation_result and insert it into the output hashmap
+            // while maintaining a bucketed count of translation quality scores
+            let (q, good_count, okay_count, poor_count) = translation_result
                 .fold(
-                    destination_hash_map,
-                    |mut destination_hash_map, (key, value)| async {
+                    (destination_hash_map, 0, 0, 0),
+                    |(mut destination_hash_map, mut good_count, mut okay_count, mut poor_count),
+                    (key, value)| async move {
                         let translation = match value {
                             Ok(translation) => translation,
                             Err(error) => {
                                 println!("Error translating string: {}", error);
-                                return destination_hash_map;
+                                return (destination_hash_map, good_count, okay_count, poor_count);
                             }
                         };
+
+                        if translation.quality_score > CUTOFF_HIGH {
+                            good_count += 1;
+                        } else if translation.quality_score >= CUTOFF_MID {
+                            okay_count += 1;
+                        } else {
+                            poor_count += 1;
+                        }
+
                         let translated_result = file::Key {
                             string: translation.text,
                             example_keys: None,
                             translate: None,
                         };
+
                         destination_hash_map.insert(key, translated_result);
-                        destination_hash_map
+                        (destination_hash_map, good_count, okay_count, poor_count)
                     },
                 )
                 .await;
@@ -195,6 +212,12 @@ async fn main() {
                 Ok(_) => println!("Successfully wrote to file"),
                 Err(error) => println!("Error writing to file: {}, ", error),
             }
+
+            println!("\nQuality Report:");
+            println!("  {}", format!("{} string(s) with high quality translations", good_count).green());
+            println!("  {}", format!("{} string(s) with mid quality translations", okay_count).yellow());
+            println!("  {}", format!("{} string(s) that we straight up hallucinated", poor_count).red());
+            println!("\nClick here for more details: {}\n", "https://spake.uncommon.industries/dashboard/".blue().underline());
         }
         Commands::Beta(beta) => match beta {
             Beta::Gather(args) => {
